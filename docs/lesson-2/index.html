@@ -38,12 +38,12 @@
       <ul>
         <li>A dedicated <strong>Level</strong> sprite with multiple scene costumes</li>
         <li>Faster, more flexible sprite-touching collision detection</li>
-        <li>A <strong>Check Touching Solid</strong> custom block to centralise all collision logic</li>
+        <li>A <code class="b">Check Touching Solid</code> custom block to centralise all collision logic</li>
         <li>A broadcast-driven game loop (<strong>Game Loop</strong>, <strong>Tick - Player</strong>, <strong>Tick - Last</strong>)</li>
-        <li>Tidy custom blocks for controls: <strong>Controls - Up and Down</strong> and <strong>Controls - Left and Right</strong></li>
+        <li>Tidy custom blocks for controls: <code class="b">Controls - Up and Down</code> and <code class="b">Controls - Left and Right</code></li>
         <li>A <strong>SCENE #</strong> variable that drives costume switching and scene transitions</li>
         <li>Edge-of-screen detection so the player walks seamlessly between scenes</li>
-        <li>A <strong>Fix Collision in Direction</strong> "wiggle" algorithm that prevents the player spawning inside the ground</li>
+        <li>A <code class="b">Fix Collision in Direction (0)</code> "wiggle" algorithm that prevents the player spawning inside the ground</li>
       </ul>
     </section>
 
@@ -58,10 +58,10 @@
 
       <p>
         In Lesson 1 we drew our level directly onto the <strong>Stage backdrop</strong> and used a
-        <strong>touching colour?</strong> block to detect collisions. That works fine for one colour,
+        <code class="b">&lt;touching color (#9966ff)?&gt;</code> block to detect collisions. That works fine for one colour,
         but as soon as we want colourful levels we'd need a separate colour check for <em>every</em>
         shade — and each extra check slows the game down. The fix is to move the level drawing into
-        its own sprite so we can use a single, fast <strong>touching (Level)?</strong> block instead.
+        its own sprite so we can use a single, fast <code class="b">&lt;touching (Level v)?&gt;</code> block instead.
       </p>
 
       <div class="callout why">
@@ -125,7 +125,7 @@ go to [back v] layer
 </pre>
             <div class="callout why">
               <strong>Why?</strong> Sprites render in front of the backdrop by default. Without
-              <strong>go to [back v] layer</strong>, the Level sprite would draw on top of the player,
+              <code class="b">go to [back v] layer</code>, the Level sprite would draw on top of the player,
               hiding them completely!
             </div>
           </div>
@@ -135,12 +135,12 @@ go to [back v] layer
           <div class="step-content">
             <p>
               Now click the <strong>Player (Sprite1)</strong> sprite and find the
-              <strong>define Move - in steps</strong> script. Replace the two
-              <strong>touching color (#9966ff)?</strong> blocks — one in the horizontal check and one
-              in the vertical check — with <strong>touching (Level)?</strong>.
+              <code class="b">define Move - in steps (steps)</code> script. Replace the two
+              <code class="b">&lt;touching color (#9966ff)?&gt;</code> blocks — one in the horizontal check and one
+              in the vertical check — with <code class="b">&lt;touching (Level v)?&gt;</code>.
             </p>
             <div class="callout tip">
-              <strong>Tip!</strong> The <strong>touching (Level)?</strong> block is in the 🩵
+              <strong>Tip!</strong> The <code class="b">&lt;touching (Level v)?&gt;</code> block is in the 🩵
               <strong>Sensing</strong> category. Click the dropdown inside the block to choose
               the <strong>Level</strong> sprite from the list.
             </div>
@@ -174,7 +174,7 @@ go to [back v] layer
 
       <p>
         Right now, every place in the code that needs to check for a collision contains its own
-        <strong>touching (Level)?</strong> block. As the game grows (moving platforms, lava, etc.)
+        <code class="b">&lt;touching (Level v)?&gt;</code> block.As the game grows (moving platforms, lava, etc.)
         we'd need to update every single one of those blocks. Instead, let's create one custom block
         that handles all collision logic — so there's only <em>one</em> place to update in the future.
       </p>
@@ -195,7 +195,7 @@ go to [back v] layer
           <div class="step-content">
             <p>
               In the 🟠 <strong>My Blocks</strong> (Custom Blocks) category, click
-              <strong>Make a Block</strong>. Name it <strong>Check Touching Solid</strong> and
+              <strong>Make a Block</strong>. Name it <code class="b">Check Touching Solid</code> and
               tick the <strong>Run without screen refresh</strong> checkbox. Click OK.
             </p>
             <div class="callout why">
@@ -210,7 +210,7 @@ go to [back v] layer
         <li>
           <div class="step-content">
             <p>
-              Build the <strong>define Check Touching Solid</strong> script. It simply checks whether
+              Build the <code class="b">define Check Touching Solid</code> script. It simply checks whether
               the player is touching the Level sprite and stores the result in the
               <strong>touching</strong> variable:
             </p>
@@ -227,7 +227,7 @@ end
               Scratch doesn't (yet!) let you drop a custom block directly into a condition — only
               built-in reporter blocks can go there. Storing the result in a variable like
               <strong>touching</strong> is the standard workaround, and it has a bonus: later we can
-              add more collision checks (e.g. <strong>touching (Lava)?</strong>) in this one block
+              add more collision checks (e.g. <code class="b">&lt;touching (Lava v)?&gt;</code>) in this one block
               and the rest of the code automatically benefits.
             </div>
           </div>
@@ -236,9 +236,9 @@ end
         <li>
           <div class="step-content">
             <p>
-              In the <strong>define Move - in steps</strong> script, update both collision checks.
-              Before each <strong>if &lt;touching (Level)?&gt;</strong>, add a
-              <strong>Check Touching Solid</strong> block and change the condition to
+              In the <code class="b">define Move - in steps (steps)</code> script, update both collision checks.
+              Before each <code class="b">if &lt;touching (Level v)?&gt; then</code>, add a
+              <code class="b">Check Touching Solid</code> block and change the condition to
               <strong>(touching) &gt; 0</strong>:
             </p>
             <pre class="blocks">
@@ -286,7 +286,7 @@ end
       </h2>
 
       <p>
-        Our <strong>when 🚩 clicked</strong> script is getting long — it currently handles
+        Our <code class="b">when gf clicked</code> script is getting long — it currently handles
         initialisation, the game loop, jump controls, left/right controls, and movement all in one
         place. Before adding multiple scenes we're going to break it apart into clearly named pieces.
         This is a really good coding habit: small, named blocks are much easier to find and fix
@@ -297,7 +297,7 @@ end
         <strong>Why broadcasts instead of just one forever loop?</strong> A broadcast lets multiple
         sprites respond to the same event. Right now we only have one player sprite, but soon we'll
         add platforms, enemies, and UI elements — each of which can have its own
-        <strong>when I receive [Tick - Player]</strong> script. A single forever loop can only run
+        <code class="b">when I receive [Tick - Player v]</code> script. A single forever loop can only run
         code in one place; broadcasts scale to a whole game engine.
       </div>
 
@@ -308,9 +308,9 @@ end
         <li>
           <div class="step-content">
             <p>
-              In the <strong>Player (Sprite1)</strong> sprite, find the <strong>when 🚩 clicked</strong>
-              script. Remove the <strong>forever</strong> loop and all the blocks inside it from this
-              script. We're going to move those contents to a separate event.
+              In the <strong>Player (Sprite1)</strong> sprite, find the <code class="b">when gf clicked</code>
+              script. Remove the <code class="b">forever</code> loop and all the blocks inside it from this
+              script.We're going to move those contents to a separate event.
             </p>
           </div>
         </li>
@@ -318,9 +318,9 @@ end
         <li>
           <div class="step-content">
             <p>
-              Create a new <strong>when I receive [Game Loop]</strong> hat block (use the
+              Create a new <code class="b">when I receive [Game Loop v]</code> hat block (use the
               🟡 <strong>Events</strong> category, choose <strong>broadcast</strong> and add a new
-              message called <strong>Game Loop</strong>). Inside a <strong>forever</strong> loop,
+              message called <strong>Game Loop</strong>). Inside a <code class="b">forever</code> loop,
               broadcast two new messages:
             </p>
             <pre class="blocks">
@@ -347,7 +347,7 @@ end
         <li>
           <div class="step-content">
             <p>
-              Create a <strong>when I receive [Tick - Player]</strong> script. This is where
+              Create a <code class="b">when I receive [Tick - Player v]</code> script. This is where
               all the per-frame player logic will live. For now it calls three blocks — we'll define
               those next:
             </p>
@@ -369,8 +369,8 @@ Move - in steps (([abs v] of (speed y)) + ([abs v] of (speed_x)))
         <li>
           <div class="step-content">
             <p>
-              Make a new custom block called <strong>Controls - Up and Down</strong>. Tick
-              <strong>Run without screen refresh</strong>. Move the jump check and gravity into it:
+              Make a new custom block called <code class="b">Controls - Up and Down</code>. Tick
+              <strong>Run without screen refresh</strong>.Move the jump check and gravity into it:
             </p>
             <pre class="blocks">
 define Controls - Up and Down
@@ -387,8 +387,8 @@ change [speed y v] by (GRAVITY)
         <li>
           <div class="step-content">
             <p>
-              Make another custom block called <strong>Controls - Left and Right</strong>, also with
-              <strong>Run without screen refresh</strong>. Move the arrow key checks and friction into it:
+              Make another custom block called <code class="b">Controls - Left and Right</code>, also with
+              <strong>Run without screen refresh</strong>.Move the arrow key checks and friction into it:
             </p>
             <pre class="blocks">
 define Controls - Left and Right
@@ -412,7 +412,7 @@ set [speed_x v] to ((speed_x) * (RESISTANCE))
         <li>
           <div class="step-content">
             <p>
-              Make a new custom block called <strong>Reset and Begin Level</strong>.
+              Make a new custom block called <code class="b">Reset and Begin Level</code>.
               <em>Important:</em> do <strong>NOT</strong> tick "Run without screen refresh" this time —
               this block contains broadcasts that need to happen across multiple frames.
             </p>
@@ -428,7 +428,7 @@ set [speed_x v] to ((speed_x) * (RESISTANCE))
         <li>
           <div class="step-content">
             <p>
-              Build the <strong>define Reset and Begin Level</strong> script. It resets all
+              Build the <code class="b">define Reset and Begin Level</code> script. It resets all
               player state and kicks off the game:
             </p>
             <pre class="blocks">
@@ -454,8 +454,8 @@ broadcast [Game Loop v]
         <li>
           <div class="step-content">
             <p>
-              Update the <strong>when 🚩 clicked</strong> script so it only sets the physics
-              constants and then calls <strong>Reset and Begin Level</strong>. Also update
+              Update the <code class="b">when gf clicked</code> script so it only sets the physics
+              constants and then calls <code class="b">Reset and Begin Level</code>. Also update
               <strong>GRAVITY</strong> to <strong>-1.5</strong> and <strong>ACCELERATION</strong>
               to <strong>2</strong> for snappier movement:
             </p>
@@ -553,7 +553,7 @@ Reset and Begin Level
             <p>
               Now let's make the Level sprite respond to scene changes. In the
               <strong>Level</strong> sprite's Code tab, add a new script using
-              <strong>when I receive [Change Scene]</strong>. Use a <strong>join</strong> block from
+              <code class="b">when I receive [Change Scene v]</code>. Use a <code class="b">(join [Scene] (SCENE #))</code> block from
               🟢 <strong>Operators</strong> to combine the word <em>"Scene"</em> with the
               <strong>SCENE #</strong> variable, then switch costume to that result:
             </p>
@@ -608,9 +608,9 @@ switch costume to (join [Scene] (SCENE #))
           <div class="step-content">
             <p>
               In the <strong>Player (Sprite1)</strong> sprite, find the
-              <strong>when I receive [Game Loop]</strong> script. After the
-              <strong>broadcast [Tick - Player]</strong> line, add a new broadcast:
-              <strong>broadcast [Tick - Last]</strong>.
+              <code class="b">when I receive [Game Loop v]</code> script. After the
+              <code class="b">broadcast [Tick - Player v]</code> line, add a new broadcast:
+              <code class="b">broadcast [Tick - Last v]</code>.
             </p>
           </div>
         </li>
@@ -618,8 +618,8 @@ switch costume to (join [Scene] (SCENE #))
         <li>
           <div class="step-content">
             <p>
-              Create a new <strong>when I receive [Tick - Last]</strong> script. Add an
-              <strong>if</strong> block that checks whether the player has gone off the right edge.
+              Create a new <code class="b">when I receive [Tick - Last v]</code> script. Add an
+              <code class="b">if &lt;&gt; then</code> block that checks whether the player has gone off the right edge.
               The stage is 480 pixels wide (−240 to +240), so we use 235 as a safe threshold a few
               pixels inside the edge:
             </p>
@@ -674,7 +674,7 @@ end
       <p>
         The left-edge and right-edge transition code is nearly identical — and we'll soon be adding
         more steps to it (the collision fix). Rather than duplicating everything, let's wrap it in a
-        custom block called <strong>Begin Scene #</strong> so we only have to write (and maintain)
+        custom block called <code class="b">Begin Scene # (scene #) go to x: (x)</code> so we only have to write (and maintain)
         the transition logic once.
       </p>
 
@@ -684,7 +684,7 @@ end
           <div class="step-content">
             <p>
               In the <strong>Player</strong> sprite's My Blocks, create a new custom block.
-              Name it: <strong>Begin Scene # (scene #) go to x: (x)</strong>.
+              Name it: <code class="b">Begin Scene # (scene #) go to x: (x)</code>.
               Add two <em>number inputs</em>: one called <strong>scene #</strong> and one called
               <strong>x</strong>. Do <strong>NOT</strong> tick "Run without screen refresh".
             </p>
@@ -694,7 +694,7 @@ end
         <li>
           <div class="step-content">
             <p>
-              Build the define script. Notice we <strong>set x</strong> to the target position
+              Build the define script. Notice we <code class="b">set x to (x)</code> to the target position
               <em>before</em> broadcasting <strong>Change Scene</strong>, so the player is already
               at the right place when the new scene appears. Then we stop the current game loop,
               wait a moment for the scene to load, and restart:
@@ -714,12 +714,12 @@ broadcast [Game Loop v] and wait
               when the scene transition begins. If we don't stop it, it will carry on moving the
               player and checking collisions on the <em>old</em> scene while we're trying to set up
               the new one, causing all sorts of strange bugs. Stopping it first means we can safely
-              do the setup, then restart cleanly with a fresh <strong>broadcast [Game Loop]</strong>.
+              do the setup, then restart cleanly with a fresh <code class="b">broadcast [Game Loop v]</code>.
             </div>
             <div class="callout why">
-              <strong>Why "wait (0) seconds"?</strong> When we <strong>broadcast [Change Scene]</strong>
+              <strong>Why "wait (0) seconds"?</strong> When we <code class="b">broadcast [Change Scene v]</code>
               without "and wait", the costume switch is <em>queued</em> rather than happening
-              immediately. A <strong>wait (0) seconds</strong> pauses just long enough for Scratch
+              immediately. A <code class="b">wait (0) seconds</code> pauses just long enough for Scratch
               to process that queued event, so by the time we run the collision fix the Level costume
               has actually changed.
             </div>
@@ -729,7 +729,7 @@ broadcast [Game Loop v] and wait
         <li>
           <div class="step-content">
             <p>
-              Update the <strong>when I receive [Tick - Last]</strong> script to use the new block
+              Update the <code class="b">when I receive [Tick - Last v]</code> script to use the new block
               instead of the inline code. Pass in the full calculated scene number and the target
               x position:
             </p>
@@ -773,7 +773,7 @@ end
       </p>
 
       <div class="callout why">
-        <strong>Why does this happen?</strong> When we <strong>set x to (235)</strong> (reappearing
+        <strong>Why does this happen?</strong> When we <code class="b">set x to (235)</code> (reappearing
         on the right side of the previous scene), the player is placed at a fixed x coordinate but
         at whatever y coordinate they had before — which might be below the new scene's floor level.
         The collision detection then sees them inside the solid and refuses to let them move in
@@ -794,7 +794,7 @@ end
         <li>
           <div class="step-content">
             <p>
-              Make a new custom block called <strong>Fix Collision in Direction (dir)</strong> —
+              Make a new custom block called <code class="b">Fix Collision in Direction (0)</code> —
               add a <em>number input</em> named <strong>dir</strong>. This time,
               <strong>DO</strong> tick <strong>Run without screen refresh</strong> — it needs to
               run fast.
@@ -872,7 +872,7 @@ end
           <div class="step-content">
             <p>
               <strong>If still touching:</strong> move forward by <strong>distance</strong> steps
-              (in the current direction), then <strong>turn 180 degrees</strong> to face the opposite
+              (in the current direction), then <code class="b">turn right (180) degrees</code> to face the opposite
               direction. Increase <strong>distance</strong> by 1 and loop again.
             </p>
             <div class="callout why">
@@ -887,7 +887,7 @@ end
         <li>
           <div class="step-content">
             <p>
-              <strong>The repeat (64) limit</strong> means we'll give up after 64 attempts. This
+              The <code class="b">repeat (64)</code> limit means we'll give up after 64 attempts. This
               prevents an infinite loop that would freeze Scratch if the player somehow ends up
               deeply stuck in a wall. You can increase this to <strong>128</strong> if you want
               extra tolerance for tricky level designs.
@@ -904,7 +904,7 @@ end
       <div class="callout tip">
         <strong>Tip — Test it visually!</strong> In the Scratch editor, manually position the player
         sprite so it overlaps the Level sprite. Then click directly on the
-        <strong>define Fix Collision in Direction</strong> block header to run it. Because you ran it
+        <code class="b">define Fix Collision in Direction (0)</code> block header to run it. Because you ran it
         by clicking (not via a broadcast), the "run without screen refresh" setting is ignored and
         you'll see the player wiggling up and down in slow motion until it pops free. Very satisfying!
       </div>
@@ -934,7 +934,7 @@ end
       <p>
         In this lesson we've transformed our single-screen prototype into the foundations of a real
         game engine. We moved from slow colour-based collisions to faster sprite-based detection,
-        centralised all collision logic into a single <strong>Check Touching Solid</strong> block,
+        centralised all collision logic into a single <code class="b">Check Touching Solid</code> block,
         and refactored the code into a clean broadcast-driven game loop with clearly named custom
         blocks. Most excitingly, we gave the game a whole world to explore — players can now walk
         between multiple scenes, with automatic collision fixing so they never get stuck in the ground.
@@ -963,6 +963,12 @@ end
   <script src="https://cdn.jsdelivr.net/npm/scratchblocks@3.6.4/build/scratchblocks.min.js"></script>
   <script>
     scratchblocks.renderMatching('pre.blocks', {
+      style: 'scratch3',
+      languages: ['en'],
+    })
+
+    scratchblocks.renderMatching("code.b", {
+      inline: true,
       style: 'scratch3',
       languages: ['en'],
     })

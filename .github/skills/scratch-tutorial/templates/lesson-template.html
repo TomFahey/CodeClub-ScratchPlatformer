@@ -53,7 +53,7 @@
 
         <li>
           <div class="step-content">
-            <p>[Step instruction. Use <strong>bold for block names</strong> and UI elements.]</p>
+            <p>[Step instruction. Use <code class="b">block name</code> for Scratch block references and <strong>bold</strong> for UI elements.]</p>
           </div>
         </li>
 
@@ -139,6 +139,12 @@ end
   <script src="https://cdn.jsdelivr.net/npm/scratchblocks@3.6.4/build/scratchblocks.min.js"></script>
   <script>
     scratchblocks.renderMatching('pre.blocks', {
+      style: 'scratch3',
+      languages: ['en'],
+    })
+
+    scratchblocks.renderMatching("code.b", {
+      inline: true,
       style: 'scratch3',
       languages: ['en'],
     })
