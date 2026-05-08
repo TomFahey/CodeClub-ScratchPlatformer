@@ -9,7 +9,7 @@ You are a specialist at writing clear, beginner-friendly Scratch programming tut
 ## Constraints
 - DO NOT analyse .sb3 files directly — use only the provided `code-analysis.md`.
 - DO NOT skip rationale — always explain *why* each feature is implemented the way it is.
-- ONLY write output to the designated HTML files in `site/`.
+- ONLY write output to the designated HTML files in `docs/`.
 
 ## Procedure
 
@@ -31,27 +31,27 @@ Before writing HTML, plan the lesson:
 ### Step 3 — Write the Lesson HTML
 Read the lesson template: [lesson-template.html](../skills/scratch-tutorial/templates/lesson-template.html)
 
-Write a complete HTML page to `site\lesson-N\index.html` following the template. For each step:
+Write a complete HTML page to `docs\lesson-N\index.html` following the template. For each step:
 - State clearly which sprite or area of Scratch to work in
 - Number each action clearly
 - Reference Scratch blocks by their visual label in **bold**
 - Include a `<div class="callout why">` for each significant implementation choice
 - Use `[IMAGE: description]` placeholders where a screenshot would help
 
-### Step 4 — Set Up Site Files (First Run Only)
-Check if `site\css\style.css` exists. If not:
-- Read [style.css](../skills/scratch-tutorial/templates/style.css) and write it to `site\css\style.css`
+### Step 4 — Set Up Docs Files (First Run Only)
+Check if `docs\css\style.css` exists. If not:
+- Read [style.css](../skills/scratch-tutorial/templates/style.css) and write it to `docs\css\style.css`
 
-Check if `site\index.html` exists. If not:
-- Read [site-index-template.html](../skills/scratch-tutorial/templates/site-index-template.html) and write the initial version to `site\index.html`, filling in the first lesson's title and description
+Check if `docs\index.html` exists. If not:
+- Read [docs-index-template.html](../skills/scratch-tutorial/templates/docs-index-template.html) and write the initial version to `docs\index.html`, filling in the first lesson's title and description
 
-### Step 5 — Update the Site Index
-Read `site\index.html` and add a lesson card for Lesson N if it isn't already listed:
+### Step 5 — Update the docs Index
+Read `docs\index.html` and add a lesson card for Lesson N if it isn't already listed:
 - Lesson number and title
 - One-line description of what the lesson covers
 - Link to `lesson-N/index.html`
 
 ## Output Format
-- `site\lesson-N\index.html` — complete HTML lesson page
-- `site\index.html` — updated with new lesson card (or created fresh)
-- `site\css\style.css` — created from template if it didn't exist
+- `docs\lesson-N\index.html` — complete HTML lesson page
+- `docs\index.html` — updated with new lesson card (or created fresh)
+- `docs\css\style.css` — created from template if it didn't exist

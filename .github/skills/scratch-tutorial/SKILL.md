@@ -42,16 +42,16 @@ Wait for the Code Analyst to complete and confirm that `Lesson N\code-analysis.m
 ### 3. Run the Tutorial Writer
 Delegate to the **@tutorial-writer** agent with this instruction:
 
-> "Generate the tutorial page for Lesson N. Read `Lesson N\code-analysis.md`, `Lesson N\Lesson Summary.md`, and `Lesson N\Transcript.md` (if it exists). Output the lesson to `site\lesson-N\index.html` and update `site\index.html`. Follow the style guide and templates in your references."
+> "Generate the tutorial page for Lesson N. Read `Lesson N\code-analysis.md`, `Lesson N\Lesson Summary.md`, and `Lesson N\Transcript.md` (if it exists). Output the lesson to `docs\lesson-N\index.html` and update `docs\index.html`. Follow the style guide and templates in your references."
 
 Wait for the Tutorial Writer to complete.
 
 ### 4. Confirm Outputs
 Verify the following files were created or updated and report them to the user:
 - `Lesson N\code-analysis.md`
-- `site\lesson-N\index.html`
-- `site\index.html`
-- `site\css\style.css` (created on first run)
+- `docs\lesson-N\index.html`
+- `docs\index.html`
+- `docs\css\style.css` (created on first run)
 
 Note any issues or files that were not created.
 
@@ -59,5 +59,5 @@ Note any issues or files that were not created.
 - [SB3 Format Guide](./references/sb3-format.md) — ZIP structure, `project.json` schema, block opcodes, PowerShell extraction
 - [Tutorial Style Guide](./references/tutorial-style-guide.md) — tone, step format, Scratch block naming conventions
 - [Lesson HTML Template](./templates/lesson-template.html)
-- [Site Index Template](./templates/site-index-template.html)
+- [Docs Index Template](./templates/docs-index-template.html)
 - [Stylesheet](./templates/style.css)
