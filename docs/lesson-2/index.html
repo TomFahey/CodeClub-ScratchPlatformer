@@ -118,11 +118,11 @@
               short startup script. Because the Level is now a sprite (not a backdrop), Scratch won't
               automatically centre it — so we position it at (0, 0) and push it behind all other sprites:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when 🚩 clicked</div>
-              <div class="block motion">go to x: (0) y: (0)</div>
-              <div class="block looks">go to [back v] layer</div>
-            </div>
+            <pre class="blocks">
+when gf clicked
+go to x: (0) y: (0)
+go to [back v] layer
+</pre>
             <div class="callout why">
               <strong>Why?</strong> Sprites render in front of the backdrop by default. Without
               <strong>go to [back v] layer</strong>, the Level sprite would draw on top of the player,
@@ -214,14 +214,14 @@
               the player is touching the Level sprite and stores the result in the
               <strong>touching</strong> variable:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Check Touching Solid</div>
-              <div class="block control">if &lt;touching (Level v)?&gt; then</div>
-              <div class="block variables indent">set [touching v] to (1)</div>
-              <div class="block control">else</div>
-              <div class="block variables indent">set [touching v] to (0)</div>
-              <div class="block control end">end</div>
-            </div>
+            <pre class="blocks">
+define Check Touching Solid
+if &lt;touching (Level v)?&gt; then
+  set [touching v] to (1)
+else
+  set [touching v] to (0)
+end
+</pre>
             <div class="callout why">
               <strong>Why a variable instead of using the block directly in the if?</strong>
               Scratch doesn't (yet!) let you drop a custom block directly into a condition — only
@@ -241,29 +241,29 @@
               <strong>Check Touching Solid</strong> block and change the condition to
               <strong>(touching) &gt; 0</strong>:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Move - in steps (steps)</div>
-              <div class="block variables">change [falling v] by (1)</div>
-              <div class="block control">repeat (steps)</div>
-              <div class="block variables indent">set [last_value v] to (x position)</div>
-              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
-              <div class="block custom indent">Check Touching Solid</div>
-              <div class="block control indent">if &lt;(touching) &gt; (0)&gt; then</div>
-              <div class="block motion indent2">set x to (last_value)</div>
-              <div class="block variables indent2">set [speed_x v] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [last_value v] to (y position)</div>
-              <div class="block motion indent">change y by ((speed y) / (steps))</div>
-              <div class="block custom indent">Check Touching Solid</div>
-              <div class="block control indent">if &lt;(touching) &gt; (0)&gt; then</div>
-              <div class="block motion indent2">set y to (last_value)</div>
-              <div class="block control indent2">if &lt;(speed y) &lt; (0)&gt; then</div>
-              <div class="block variables indent2">set [falling v] to (0)</div>
-              <div class="block control indent2">end</div>
-              <div class="block variables indent2">set [speed y v] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end repeat</div>
-            </div>
+            <pre class="blocks">
+define Move - in steps (steps)
+change [falling v] by (1)
+repeat (steps)
+  set [last_value v] to (x position)
+  change x by ((speed_x) / (steps))
+  Check Touching Solid
+  if &lt;(touching) &gt; (0)&gt; then
+    set x to (last_value)
+    set [speed_x v] to (0)
+  end
+  set [last_value v] to (y position)
+  change y by ((speed y) / (steps))
+  Check Touching Solid
+  if &lt;(touching) &gt; (0)&gt; then
+    set y to (last_value)
+    if &lt;(speed y) &lt; (0)&gt; then
+      set [falling v] to (0)
+    end
+    set [speed y v] to (0)
+  end
+end
+</pre>
           </div>
         </li>
 
@@ -323,13 +323,13 @@
               message called <strong>Game Loop</strong>). Inside a <strong>forever</strong> loop,
               broadcast two new messages:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when I receive [Game Loop v]</div>
-              <div class="block control">forever</div>
-              <div class="block event indent">broadcast [Tick - Player v]</div>
-              <div class="block event indent">broadcast [Tick - Last v]</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+when I receive [Game Loop v]
+forever
+  broadcast [Tick - Player v]
+  broadcast [Tick - Last v]
+end
+</pre>
             <div class="callout why">
               <strong>Why "Tick"?</strong> A "tick" is one single frame of the game — like the tick
               of a clock. At 30 frames per second, 30 ticks happen every second. Naming broadcasts
@@ -351,12 +351,12 @@
               all the per-frame player logic will live. For now it calls three blocks — we'll define
               those next:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when I receive [Tick - Player v]</div>
-              <div class="block custom">Controls - Up and Down</div>
-              <div class="block custom">Controls - Left and Right</div>
-              <div class="block custom">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
-            </div>
+            <pre class="blocks">
+when I receive [Tick - Player v]
+Controls - Up and Down
+Controls - Left and Right
+Move - in steps (([abs v] of (speed y)) + ([abs v] of (speed_x)))
+</pre>
           </div>
         </li>
 
@@ -372,15 +372,15 @@
               Make a new custom block called <strong>Controls - Up and Down</strong>. Tick
               <strong>Run without screen refresh</strong>. Move the jump check and gravity into it:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Controls - Up and Down</div>
-              <div class="block control">if &lt;key (up arrow v) pressed?&gt; then</div>
-              <div class="block control indent">if &lt;(falling) &lt; (3)&gt; then</div>
-              <div class="block variables indent2">set [speed y v] to (JUMP FORCE)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end</div>
-              <div class="block variables">change [speed y v] by (GRAVITY)</div>
-            </div>
+            <pre class="blocks">
+define Controls - Up and Down
+if &lt;key [up arrow v] pressed?&gt; then
+  if &lt;(falling) &lt; (3)&gt; then
+    set [speed y v] to (JUMP FORCE)
+  end
+end
+change [speed y v] by (GRAVITY)
+</pre>
           </div>
         </li>
 
@@ -390,16 +390,16 @@
               Make another custom block called <strong>Controls - Left and Right</strong>, also with
               <strong>Run without screen refresh</strong>. Move the arrow key checks and friction into it:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Controls - Left and Right</div>
-              <div class="block control">if &lt;key (left arrow v) pressed?&gt; then</div>
-              <div class="block variables indent">change [speed_x v] by ((0) - (ACCELERATION))</div>
-              <div class="block control end">end</div>
-              <div class="block control">if &lt;key (right arrow v) pressed?&gt; then</div>
-              <div class="block variables indent">change [speed_x v] by (ACCELERATION)</div>
-              <div class="block control end">end</div>
-              <div class="block variables">set [speed_x v] to ((speed_x) * (RESISTANCE))</div>
-            </div>
+            <pre class="blocks">
+define Controls - Left and Right
+if &lt;key [left arrow v] pressed?&gt; then
+  change [speed_x v] by ((0) - (ACCELERATION))
+end
+if &lt;key [right arrow v] pressed?&gt; then
+  change [speed_x v] by (ACCELERATION)
+end
+set [speed_x v] to ((speed_x) * (RESISTANCE))
+</pre>
           </div>
         </li>
 
@@ -431,17 +431,17 @@
               Build the <strong>define Reset and Begin Level</strong> script. It resets all
               player state and kicks off the game:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Reset and Begin Level</div>
-              <div class="block variables">set [SCENE # v] to (1)</div>
-              <div class="block variables">set [speed y v] to (0)</div>
-              <div class="block variables">set [speed_x v] to (0)</div>
-              <div class="block variables">set [falling v] to (99)</div>
-              <div class="block motion">go to x: (-174) y: (-55)</div>
-              <div class="block motion">point in direction (90)</div>
-              <div class="block event">broadcast [Change Scene v]</div>
-              <div class="block event">broadcast [Game Loop v]</div>
-            </div>
+            <pre class="blocks">
+define Reset and Begin Level
+set [SCENE # v] to (1)
+set [speed y v] to (0)
+set [speed_x v] to (0)
+set [falling v] to (99)
+go to x: (-174) y: (-55)
+point in direction (90)
+broadcast [Change Scene v]
+broadcast [Game Loop v]
+</pre>
             <div class="callout why">
               <strong>Why set falling to 99?</strong> The jump check only allows jumping when
               <strong>falling</strong> is less than 3, which means the player is on the ground.
@@ -459,14 +459,14 @@
               <strong>GRAVITY</strong> to <strong>-1.5</strong> and <strong>ACCELERATION</strong>
               to <strong>2</strong> for snappier movement:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when 🚩 clicked</div>
-              <div class="block variables">set [GRAVITY v] to (-1.5)</div>
-              <div class="block variables">set [JUMP FORCE v] to (12)</div>
-              <div class="block variables">set [ACCELERATION v] to (2)</div>
-              <div class="block variables">set [RESISTANCE v] to (0.8)</div>
-              <div class="block custom">Reset and Begin Level</div>
-            </div>
+            <pre class="blocks">
+when gf clicked
+set [GRAVITY v] to (-1.5)
+set [JUMP FORCE v] to (12)
+set [ACCELERATION v] to (2)
+set [RESISTANCE v] to (0.8)
+Reset and Begin Level
+</pre>
           </div>
         </li>
 
@@ -557,10 +557,10 @@
               🟢 <strong>Operators</strong> to combine the word <em>"Scene"</em> with the
               <strong>SCENE #</strong> variable, then switch costume to that result:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when I receive [Change Scene v]</div>
-              <div class="block looks">switch costume to (join [Scene] (SCENE #))</div>
-            </div>
+            <pre class="blocks">
+when I receive [Change Scene v]
+switch costume to (join [Scene] (SCENE #))
+</pre>
             <div class="callout why">
               <strong>Why join "Scene" with SCENE #?</strong> It constructs the costume name
               dynamically. When <strong>SCENE #</strong> is 1, this becomes <em>"Scene1"</em>;
@@ -623,19 +623,19 @@
               The stage is 480 pixels wide (−240 to +240), so we use 235 as a safe threshold a few
               pixels inside the edge:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when I receive [Tick - Last v]</div>
-              <div class="block control">if &lt;(x position) &gt; (235)&gt; then</div>
-              <div class="block variables indent">change [SCENE # v] by (1)</div>
-              <div class="block event indent">broadcast [Change Scene v]</div>
-              <div class="block motion indent">set x to (-235)</div>
-              <div class="block control end">end</div>
-              <div class="block control">if &lt;(x position) &lt; (-235)&gt; then</div>
-              <div class="block variables indent">change [SCENE # v] by (-1)</div>
-              <div class="block event indent">broadcast [Change Scene v]</div>
-              <div class="block motion indent">set x to (235)</div>
-              <div class="block control end">end</div>
-            </div>
+            <pre class="blocks">
+when I receive [Tick - Last v]
+if &lt;(x position) &gt; (235)&gt; then
+  change [SCENE # v] by (1)
+  broadcast [Change Scene v]
+  set x to (-235)
+end
+if &lt;(x position) &lt; (-235)&gt; then
+  change [SCENE # v] by (-1)
+  broadcast [Change Scene v]
+  set x to (235)
+end
+</pre>
             <div class="callout why">
               <strong>Why check in "Tick - Last" and not "Tick - Player"?</strong> Movement is
               calculated in <strong>Tick - Player</strong>. We need to check the <em>final</em>
@@ -699,16 +699,16 @@
               at the right place when the new scene appears. Then we stop the current game loop,
               wait a moment for the scene to load, and restart:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Begin Scene # (scene #) go to x: (x)</div>
-              <div class="block variables">set [SCENE # v] to (scene #)</div>
-              <div class="block motion">set x to (x)</div>
-              <div class="block event">broadcast [Change Scene v]</div>
-              <div class="block control">stop [other scripts in sprite v]</div>
-              <div class="block control">wait (0) seconds</div>
-              <div class="block custom">Fix Collision in Direction (0)</div>
-              <div class="block event">broadcast [Game Loop v] and wait</div>
-            </div>
+            <pre class="blocks">
+define Begin Scene # (scene #) go to x: (x)
+set [SCENE # v] to (scene #)
+set x to (x)
+broadcast [Change Scene v]
+stop [other scripts in sprite v]
+wait (0) seconds
+Fix Collision in Direction (0)
+broadcast [Game Loop v] and wait
+</pre>
             <div class="callout why">
               <strong>Why "stop other scripts in sprite"?</strong> The game loop is still running
               when the scene transition begins. If we don't stop it, it will carry on moving the
@@ -733,15 +733,15 @@
               instead of the inline code. Pass in the full calculated scene number and the target
               x position:
             </p>
-            <div class="scratch-blocks">
-              <div class="block event">when I receive [Tick - Last v]</div>
-              <div class="block control">if &lt;(x position) &gt; (235)&gt; then</div>
-              <div class="block custom indent">Begin Scene # ((SCENE #) + (1)) go to x: (-235)</div>
-              <div class="block control end">end</div>
-              <div class="block control">if &lt;(x position) &lt; (-235)&gt; then</div>
-              <div class="block custom indent">Begin Scene # ((SCENE #) - (1)) go to x: (235)</div>
-              <div class="block control end">end</div>
-            </div>
+            <pre class="blocks">
+when I receive [Tick - Last v]
+if &lt;(x position) &gt; (235)&gt; then
+  Begin Scene # ((SCENE #) + (1)) go to x: (-235)
+end
+if &lt;(x position) &lt; (-235)&gt; then
+  Begin Scene # ((SCENE #) - (1)) go to x: (235)
+end
+</pre>
           </div>
         </li>
 
@@ -809,22 +809,22 @@
               direction (upward to start) and moves them a little further each loop until they're
               no longer stuck:
             </p>
-            <div class="scratch-blocks">
-              <div class="block custom">define Fix Collision in Direction (dir)</div>
-              <div class="block variables">set [temp v] to (direction)</div>
-              <div class="block variables">set [distance v] to (1)</div>
-              <div class="block motion">point in direction (dir)</div>
-              <div class="block control">repeat (64)</div>
-              <div class="block custom indent">Check Touching Solid</div>
-              <div class="block control indent">if &lt;(touching) &lt; (1)&gt; then</div>
-              <div class="block motion indent2">point in direction (temp)</div>
-              <div class="block control indent2">stop [this script v]</div>
-              <div class="block control indent">end</div>
-              <div class="block motion indent">move (distance) steps</div>
-              <div class="block motion indent">turn right (180) degrees</div>
-              <div class="block variables indent">change [distance v] by (1)</div>
-              <div class="block control end">end repeat</div>
-            </div>
+            <pre class="blocks">
+define Fix Collision in Direction (dir)
+set [temp v] to (direction)
+set [distance v] to (1)
+point in direction (dir)
+repeat (64)
+  Check Touching Solid
+  if &lt;(touching) &lt; (1)&gt; then
+    point in direction (temp)
+    stop [this script v]
+  end
+  move (distance) steps
+  turn right (180) degrees
+  change [distance v] by (1)
+end
+</pre>
           </div>
         </li>
 
@@ -960,6 +960,13 @@
          target="_blank" rel="noopener">griffpatch's Code a Platformer Game</a> series
     </p>
   </footer>
+  <script src="https://scratchblocks.github.io/js/scratchblocks-v3.6-min.js"></script>
+  <script>
+    scratchblocks.renderMatching('pre.blocks', {
+      style: 'scratch3',
+      languages: ['en'],
+    })
+  </script>
 
 </body>
 </html>

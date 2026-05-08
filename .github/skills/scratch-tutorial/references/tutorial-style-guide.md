@@ -123,22 +123,33 @@ Section headers should describe the *feature being added*, not the underlying te
 
 ## Scratch Block Stacks (HTML)
 
-Represent Scratch block stacks using the `.scratch-blocks` HTML element. Each block on a new line; add `indent` or `indent2` for nested blocks:
+Represent Scratch block stacks using `<pre class="blocks">` tags with **scratchblocks notation**. The `scratchblocks` library renders these automatically in the browser.
+
+Key syntax rules:
+- `when gf clicked` — green flag hat block
+- `forever` / `end` — loop blocks (always close with `end`)
+- `if <condition> then` / `end` — conditional
+- `(variable)` — variable or reporter
+- `[value v]` — dropdown input
+- `<boolean>` — boolean block  
+- `::colour` — override colour (e.g. `move (10) steps :: motion`)
+
+Example:
 
 ```html
-<div class="scratch-blocks">
-  <div class="block event">when 🚩 clicked</div>
-  <div class="block control">forever</div>
-  <div class="block motion indent">change x by (Speed)</div>
-  <div class="block sensing indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
-  <div class="block variables indent2">set [xVelocity ▾] to (5)</div>
-  <div class="block control indent">end</div>
-  <div class="block control end">end forever</div>
-</div>
+<pre class="blocks">
+when gf clicked
+forever
+  if &lt;key [right arrow v] pressed?&gt; then
+    set [xVelocity v] to (5)
+  end
+end
+</pre>
 ```
 
-Block CSS classes: `event`, `control`, `motion`, `looks`, `sound`, `sensing`, `operators`, `variables`.
-Add `indent` or `indent2` for nesting. Add `end` to closing blocks (e.g. `end forever`) for visual clarity.
+For the full syntax reference see [the scratchblocks wiki](https://en.scratch-wiki.info/wiki/Block_Plugin/Syntax).
+
+> **Note:** The `scratchblocks` CDN script is already included in the lesson template — no extra setup needed.
 
 ---
 

@@ -60,12 +60,12 @@
         <li>
           <div class="step-content">
             <p>[A step that includes a block stack example:]</p>
-            <div class="scratch-blocks">
-              <div class="block event">when 🚩 clicked</div>
-              <div class="block control">forever</div>
-              <div class="block motion indent">change x by (10)</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+when gf clicked
+forever
+  move (10) steps
+end
+</pre>
           </div>
         </li>
 
@@ -135,6 +135,14 @@
          target="_blank" rel="noopener">griffpatch's Code a Platformer Game</a> series
     </p>
   </footer>
+
+  <script src="https://scratchblocks.github.io/js/scratchblocks-v3.6-min.js"></script>
+  <script>
+    scratchblocks.renderMatching('pre.blocks', {
+      style: 'scratch3',
+      languages: ['en'],
+    })
+  </script>
 
 </body>
 </html>

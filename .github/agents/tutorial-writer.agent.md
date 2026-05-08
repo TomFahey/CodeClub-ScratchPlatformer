@@ -35,7 +35,7 @@ Write a complete HTML page to `docs\lesson-N\index.html` following the template.
 - State clearly which sprite or area of Scratch to work in
 - Number each action clearly
 - Reference Scratch blocks by their visual label in **bold**
-- Include a `<div class="callout why">` for each significant implementation choice
+- Include block stacks using `<pre class="blocks">` with scratchblocks notation (see style guide for syntax)
 - Use `[IMAGE: description]` placeholders where a screenshot would help
 
 ### Step 4 — Set Up Docs Files (First Run Only)

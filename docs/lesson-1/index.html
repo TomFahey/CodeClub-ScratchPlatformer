@@ -177,16 +177,16 @@
         <li>
           <div class="step-content">
             <p>Inside the forever loop, place a <strong>change [speed y ▾] by (GRAVITY)</strong> block (drag the <strong>GRAVITY</strong> variable into the number slot). Then directly below that, add a <strong>change y by (speed y)</strong> block.</p>
-            <div class="scratch-blocks">
-              <div class="block event">when 🚩 clicked</div>
-              <div class="block variables">set [GRAVITY ▾] to (-1)</div>
-              <div class="block variables">set [speed y ▾] to (0)</div>
-              <div class="block motion">go to x: (-150) y: (55)</div>
-              <div class="block control">forever</div>
-              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
-              <div class="block motion indent">change y by (speed y)</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+when gf clicked
+set [GRAVITY v] to (-1)
+set [speed y v] to (0)
+go to x: (-150) y: (55)
+forever
+  change [speed y v] by (GRAVITY)
+  change y by (speed y)
+end
+</pre>
             <div class="callout why">
               <strong>Why change speed y by GRAVITY instead of just changing y by -1?</strong> If we moved the player down by a fixed amount each frame, they'd fall at a constant speed — like a slow elevator. Real gravity accelerates objects: the longer you fall, the faster you go. Each frame, GRAVITY (-1) is added to speed y, making speed y more and more negative, which makes the player fall faster and faster. That's acceleration!
             </div>
@@ -262,22 +262,22 @@
         <li>
           <div class="step-content">
             <p>A new <strong>define Fix Overlap</strong> block appears in your scripts area. Drag the <strong>repeat until</strong> loop (from inside the if block) and attach it underneath the define block. Replace it in the if block with the new <strong>Fix Overlap</strong> block.</p>
-            <div class="scratch-blocks">
-              <div class="block control">forever</div>
-              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
-              <div class="block motion indent">change y by (speed y)</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block looks indent2">Fix Overlap</div>
-              <div class="block variables indent2">set [speed y ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end forever</div>
-            </div>
-            <div class="scratch-blocks">
-              <div class="block looks">define Fix Overlap  ⚡ run without screen refresh</div>
-              <div class="block control">repeat until &lt;not &lt;touching color [#9966ff]?&gt;&gt;</div>
-              <div class="block motion indent">change y by (1)</div>
-              <div class="block control end">end repeat</div>
-            </div>
+            <pre class="blocks">
+forever
+  change [speed y v] by (GRAVITY)
+  change y by (speed y)
+  if &lt;touching color (#9966ff)?&gt; then
+    Fix Overlap
+    set [speed y v] to (0)
+  end
+end
+</pre>
+            <pre class="blocks">
+define Fix Overlap
+repeat until &lt;not &lt;touching color (#9966ff)?&gt;&gt;
+  change y by (1)
+end
+</pre>
           </div>
         </li>
 
@@ -355,27 +355,27 @@
         <li>
           <div class="step-content">
             <p>Below the resistance line and above the gravity line, add a <strong>change x by (speed_x)</strong> block to actually move the player horizontally each frame.</p>
-            <div class="scratch-blocks">
-              <div class="block control">forever</div>
-              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">set [speed y ▾] to (12)</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by (-1.5)</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by (1.5)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (0.8))</div>
-              <div class="block motion indent">change x by (speed_x)</div>
-              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
-              <div class="block motion indent">change y by (speed y)</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block looks indent2">Fix Overlap</div>
-              <div class="block variables indent2">set [speed y ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+forever
+  if &lt;key [up arrow v] pressed?&gt; then
+    set [speed y v] to (12)
+  end
+  if &lt;key [left arrow v] pressed?&gt; then
+    change [speed_x v] by (-1.5)
+  end
+  if &lt;key [right arrow v] pressed?&gt; then
+    change [speed_x v] by (1.5)
+  end
+  set [speed_x v] to ((speed_x) * (0.8))
+  change x by (speed_x)
+  change [speed y v] by (GRAVITY)
+  change y by (speed y)
+  if &lt;touching color (#9966ff)?&gt; then
+    Fix Overlap
+    set [speed y v] to (0)
+  end
+end
+</pre>
           </div>
         </li>
 
@@ -456,23 +456,23 @@
         <li>
           <div class="step-content">
             <p>Here's what the complete <strong>define Move - in steps</strong> block looks like so far:</p>
-            <div class="scratch-blocks">
-              <div class="block looks">define Move - in steps (steps)  ⚡ run without screen refresh</div>
-              <div class="block control">repeat (steps)</div>
-              <div class="block variables indent">set [last_value ▾] to (x position)</div>
-              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block motion indent2">set x to (last_value)</div>
-              <div class="block variables indent2">set [speed_x ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [last_value ▾] to (y position)</div>
-              <div class="block motion indent">change y by ((speed y) / (steps))</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block motion indent2">set y to (last_value)</div>
-              <div class="block variables indent2">set [speed y ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end repeat</div>
-            </div>
+            <pre class="blocks">
+define Move - in steps (steps)
+repeat (steps)
+  set [last_value v] to (x position)
+  change x by ((speed_x) / (steps))
+  if &lt;touching color (#9966ff)?&gt; then
+    set x to (last_value)
+    set [speed_x v] to (0)
+  end
+  set [last_value v] to (y position)
+  change y by ((speed y) / (steps))
+  if &lt;touching color (#9966ff)?&gt; then
+    set y to (last_value)
+    set [speed y v] to (0)
+  end
+end
+</pre>
           </div>
         </li>
 
@@ -485,22 +485,22 @@
         <li>
           <div class="step-content">
             <p>For the <code>steps</code> input, we need to pass in a number that's large enough to ensure we never move more than 1 pixel per micro-step. That number is the total distance we're about to travel. From <strong>Operators</strong> (green), build: <code>(abs of (speed y)) + (abs of (speed_x))</code>. The <strong>abs</strong> (absolute value) block is found inside the green <strong>( ) of ( )</strong> maths block — click its dropdown and choose <strong>abs</strong>. This converts negative speeds to positive numbers for the calculation.</p>
-            <div class="scratch-blocks">
-              <div class="block control">forever</div>
-              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">set [speed y ▾] to (12)</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by (-1.5)</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by (1.5)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (0.8))</div>
-              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
-              <div class="block looks indent">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+forever
+  if &lt;key [up arrow v] pressed?&gt; then
+    set [speed y v] to (12)
+  end
+  if &lt;key [left arrow v] pressed?&gt; then
+    change [speed_x v] by (-1.5)
+  end
+  if &lt;key [right arrow v] pressed?&gt; then
+    change [speed_x v] by (1.5)
+  end
+  set [speed_x v] to ((speed_x) * (0.8))
+  change [speed y v] by (GRAVITY)
+  Move - in steps (([abs v] of (speed y)) + ([abs v] of (speed_x)))
+end
+</pre>
             <div class="callout why">
               <strong>Why use abs(speed y) + abs(speed_x)?</strong> This gives us the total number of pixels we're about to move in this frame (combining both directions). By running that many micro-steps, we guarantee each step is at most 1 pixel — which means a collision is always caught before we've moved more than 1 pixel into a wall or floor. No tunnelling!
             </div>
@@ -551,27 +551,27 @@
             <div class="callout why">
               <strong>Why check that speed y is negative (less than 0)?</strong> A negative speed y means the player was moving <em>downwards</em> when the collision happened — that means they hit a floor. A positive speed y means they were moving <em>upwards</em> and hit a ceiling. We only want to reset the falling counter for floor landings. Without this check, a player holding the jump key could stick to the ceiling!
             </div>
-            <div class="scratch-blocks">
-              <div class="block looks">define Move - in steps (steps)  ⚡ run without screen refresh</div>
-              <div class="block variables">change [falling ▾] by (1)</div>
-              <div class="block control">repeat (steps)</div>
-              <div class="block variables indent">set [last_value ▾] to (x position)</div>
-              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block motion indent2">set x to (last_value)</div>
-              <div class="block variables indent2">set [speed_x ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [last_value ▾] to (y position)</div>
-              <div class="block motion indent">change y by ((speed y) / (steps))</div>
-              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
-              <div class="block motion indent2">set y to (last_value)</div>
-              <div class="block control indent2">if &lt;(speed y) &lt; (0)&gt; then</div>
-              <div class="block variables indent2" style="margin-left:4.5rem;">set [falling ▾] to (0)</div>
-              <div class="block control indent2">end</div>
-              <div class="block variables indent2">set [speed y ▾] to (0)</div>
-              <div class="block control indent">end</div>
-              <div class="block control end">end repeat</div>
-            </div>
+            <pre class="blocks">
+define Move - in steps (steps)
+change [falling v] by (1)
+repeat (steps)
+  set [last_value v] to (x position)
+  change x by ((speed_x) / (steps))
+  if &lt;touching color (#9966ff)?&gt; then
+    set x to (last_value)
+    set [speed_x v] to (0)
+  end
+  set [last_value v] to (y position)
+  change y by ((speed y) / (steps))
+  if &lt;touching color (#9966ff)?&gt; then
+    set y to (last_value)
+    if &lt;(speed y) &lt; (0)&gt; then
+      set [falling v] to (0)
+    end
+    set [speed y v] to (0)
+  end
+end
+</pre>
           </div>
         </li>
 
@@ -581,13 +581,13 @@
             <div class="callout why">
               <strong>Why &lt; 3 instead of = 0?</strong> This gives the player a 2-frame window to jump after walking off the edge of a platform. Players often press jump slightly too late, and without this forgiveness they'd feel cheated. This trick is called <em>coyote time</em> — named after a certain cartoon coyote who keeps running briefly after going off a cliff! It makes the game feel fair without any cheating.
             </div>
-            <div class="scratch-blocks">
-              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
-              <div class="block control indent2">if &lt;(falling) &lt; (3)&gt; then</div>
-              <div class="block variables indent2" style="margin-left:4.5rem;">set [speed y ▾] to (12)</div>
-              <div class="block control indent2">end</div>
-              <div class="block control indent">end</div>
-            </div>
+            <pre class="blocks">
+if &lt;key [up arrow v] pressed?&gt; then
+  if &lt;(falling) &lt; (3)&gt; then
+    set [speed y v] to (12)
+  end
+end
+</pre>
           </div>
         </li>
 
@@ -600,11 +600,11 @@
         <li>
           <div class="step-content">
             <p>At the top of the <strong>when 🚩 clicked</strong> script, add these three set blocks alongside the GRAVITY initialisation:</p>
-            <div class="scratch-blocks">
-              <div class="block variables">set [JUMP FORCE ▾] to (12)</div>
-              <div class="block variables">set [ACCELERATION ▾] to (1.5)</div>
-              <div class="block variables">set [RESISTANCE ▾] to (0.8)</div>
-            </div>
+            <pre class="blocks">
+set [JUMP FORCE v] to (12)
+set [ACCELERATION v] to (1.5)
+set [RESISTANCE v] to (0.8)
+</pre>
           </div>
         </li>
 
@@ -623,32 +623,32 @@
         <li>
           <div class="step-content">
             <p>Here's the complete final version of the <strong>when 🚩 clicked</strong> script:</p>
-            <div class="scratch-blocks">
-              <div class="block event">when 🚩 clicked</div>
-              <div class="block variables">set [GRAVITY ▾] to (-1)</div>
-              <div class="block variables">set [JUMP FORCE ▾] to (12)</div>
-              <div class="block variables">set [ACCELERATION ▾] to (1.5)</div>
-              <div class="block variables">set [RESISTANCE ▾] to (0.8)</div>
-              <div class="block variables">set [speed_x ▾] to (0)</div>
-              <div class="block variables">set [speed y ▾] to (0)</div>
-              <div class="block motion">go to x: (-150) y: (55)</div>
-              <div class="block control">forever</div>
-              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
-              <div class="block control indent2">if &lt;(falling) &lt; (3)&gt; then</div>
-              <div class="block variables indent2" style="margin-left:4.5rem;">set [speed y ▾] to (JUMP FORCE)</div>
-              <div class="block control indent2">end</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by ((0) - (ACCELERATION))</div>
-              <div class="block control indent">end</div>
-              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
-              <div class="block variables indent2">change [speed_x ▾] by (ACCELERATION)</div>
-              <div class="block control indent">end</div>
-              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (RESISTANCE))</div>
-              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
-              <div class="block looks indent">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
-              <div class="block control end">end forever</div>
-            </div>
+            <pre class="blocks">
+when gf clicked
+set [GRAVITY v] to (-1)
+set [JUMP FORCE v] to (12)
+set [ACCELERATION v] to (1.5)
+set [RESISTANCE v] to (0.8)
+set [speed_x v] to (0)
+set [speed y v] to (0)
+go to x: (-150) y: (55)
+forever
+  if &lt;key [up arrow v] pressed?&gt; then
+    if &lt;(falling) &lt; (3)&gt; then
+      set [speed y v] to (JUMP FORCE)
+    end
+  end
+  if &lt;key [left arrow v] pressed?&gt; then
+    change [speed_x v] by ((0) - (ACCELERATION))
+  end
+  if &lt;key [right arrow v] pressed?&gt; then
+    change [speed_x v] by (ACCELERATION)
+  end
+  set [speed_x v] to ((speed_x) * (RESISTANCE))
+  change [speed y v] by (GRAVITY)
+  Move - in steps (([abs v] of (speed y)) + ([abs v] of (speed_x)))
+end
+</pre>
           </div>
         </li>
 
@@ -693,6 +693,13 @@
          target="_blank" rel="noopener">griffpatch's Code a Platformer Game</a> series
     </p>
   </footer>
+  <script src="https://scratchblocks.github.io/js/scratchblocks-v3.6-min.js"></script>
+  <script>
+    scratchblocks.renderMatching('pre.blocks', {
+      style: 'scratch3',
+      languages: ['en'],
+    })
+  </script>
 
 </body>
 </html>
