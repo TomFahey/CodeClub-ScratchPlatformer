@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 1: Player Movement &amp; Physics | Scratch Platformer</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="site-title">🐱 Scratch Platformer</a>
+      <span class="header-subtitle">Based on griffpatch's tutorial series</span>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../index.html">All Lessons</a>
+    <span aria-hidden="true"> › </span>
+    <span>Lesson 1</span>
+  </nav>
+
+  <main class="lesson-content">
+
+    <div class="lesson-header">
+      <div class="lesson-badge">Lesson 1</div>
+      <h1>Player Movement &amp; Physics</h1>
+      <p class="lesson-intro">Build the heart of a platformer game — a player sprite that falls with gravity, jumps, walks left and right, and reliably stops when it hits the ground.</p>
+    </div>
+
+    <section class="overview card">
+      <h2>📋 What We'll Build</h2>
+      <ul>
+        <li>A player sprite with a simple square costume and a basic level drawn in the backdrop</li>
+        <li>Realistic gravity and jumping using velocity variables and physics constants</li>
+        <li>Left and right movement with acceleration and friction (resistance)</li>
+        <li>Solid collision detection against the level colour using a clever "Move in steps" custom block</li>
+        <li>A "coyote jump" window that makes the controls feel fair and responsive</li>
+      </ul>
+    </section>
+
+    <!-- =====================================================================
+         SECTION 1 — Setting Up the Project
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">1</span>
+        Setting Up the Project
+      </h2>
+
+      <p>Before we write any code, we need a player sprite with a costume and a backdrop that acts as our level. We're starting simple on purpose — a plain square player makes the physics much easier to get right before we add fancy graphics later.</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>Open <a href="https://scratch.mit.edu" target="_blank" rel="noopener">Scratch</a> and start a new project. If you'd like to use griffpatch's starter project (which already contains all the Scratch Cat costumes you'll need in later lessons), look for the link under the original video and click <strong>Remix</strong>. Otherwise, a blank project is fine for now.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Click on <strong>Sprite1</strong> in the sprite panel at the bottom right. Rename it <strong>Player</strong> by clicking the name field at the top of the sprite panel and typing the new name.</p>
+            <div class="callout why">
+              <strong>Why?</strong> Giving your sprite a meaningful name makes your project much easier to understand as it grows. "Player" tells you immediately what this sprite does.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Click the <strong>Costumes</strong> tab at the top of the screen to open the costume editor. Click the <strong>Paint</strong> button (the brush icon) to create a new, blank costume.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Select the <strong>Rectangle</strong> tool in the costume editor. Draw a small square to represent your player character — griffpatch calls his "Guy". The exact size doesn't matter, but keep it fairly small (around 30×30 pixels works well).</p>
+            <div class="callout tip">
+              <strong>Tip!</strong> After drawing your rectangle, drag it towards the centre crosshair of the drawing canvas until it snaps into place. It's really important that the costume is perfectly centred, otherwise the collision detection won't work correctly.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Now let's draw the level. Click on the <strong>Stage</strong> thumbnail (bottom right, next to the sprite list), then click the <strong>Backdrops</strong> tab at the top of the screen.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Using the <strong>Rectangle</strong> tool, draw a solid floor across the bottom of the stage. Pick a colour you like — griffpatch uses purple (<strong>#9966ff</strong>), and we'll be detecting this exact colour later. Make note of whichever colour you choose, as you'll need it again.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Add a couple more rectangles to make some simple stairs and a floating platform. This gives us different shapes to test our collision detection against.</p>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The Scratch backdrop editor showing a simple level with a flat floor, two stair steps, and a small floating platform, all drawn in purple]</div>
+        <figcaption>A simple level drawn in the backdrop — floor, stairs, and a floating platform</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click back on the <strong>Player</strong> sprite. You should see your square costume in the centre of the stage with your purple level behind it. Everything looking good? Great — let's start coding!
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 2 — Adding Gravity
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">2</span>
+        Adding Gravity
+      </h2>
+
+      <p>Gravity means the player accelerates downwards over time — they fall faster and faster the longer they're in the air. We'll use a variable called <strong>speed y</strong> to track how fast the player is currently moving vertically, and a constant called <strong>GRAVITY</strong> to control how quickly they speed up.</p>
+
+      <p>Make sure you're working on the <strong>Player</strong> sprite for this section.</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>Click the <strong>Variables</strong> category (dark orange) in the blocks panel and click <strong>Make a Variable</strong>. Name it <code>speed y</code> and select <strong>For this sprite only</strong>, then click OK.</p>
+            <div class="callout why">
+              <strong>Why "for this sprite only"?</strong> Vertical speed belongs to the Player — no other sprite needs to know about it. Keeping a variable local to its sprite avoids confusion as the project grows.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Make a second variable. Name it <code>GRAVITY</code> and this time select <strong>For all sprites</strong>. We use capital letters to remind ourselves that this is a constant — a value we set once at the start and don't change during the game.</p>
+            <div class="callout why">
+              <strong>Why a separate GRAVITY variable instead of just typing -1?</strong> Using a named variable means you can tweak the feel of the game in one place. If you decide gravity feels too floaty, just change the one <strong>set [GRAVITY ▾]</strong> block — you don't have to hunt through all your code.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Click the <strong>Events</strong> category (yellow) and drag a <strong>when 🚩 clicked</strong> block into the scripts area.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>From <strong>Variables</strong>, attach a <strong>set [GRAVITY ▾] to (0)</strong> block and change the value to <code>-1</code>. Then attach a <strong>set [speed y ▾] to (0)</strong> block below it.</p>
+            <div class="callout why">
+              <strong>Why set speed y to 0 at the start?</strong> Scratch remembers variable values between runs. By resetting everything when the green flag is clicked, we make sure the player always starts fresh — not carrying over speed from a previous run.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>From <strong>Motion</strong> (blue), attach a <strong>go to x: (-150) y: (55)</strong> block. This puts the player at a starting position just above the floor.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>From <strong>Control</strong> (orange), attach a <strong>forever</strong> loop block below the go-to block. Everything that happens every frame of the game will live inside this loop.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the forever loop, place a <strong>change [speed y ▾] by (GRAVITY)</strong> block (drag the <strong>GRAVITY</strong> variable into the number slot). Then directly below that, add a <strong>change y by (speed y)</strong> block.</p>
+            <div class="scratch-blocks">
+              <div class="block event">when 🚩 clicked</div>
+              <div class="block variables">set [GRAVITY ▾] to (-1)</div>
+              <div class="block variables">set [speed y ▾] to (0)</div>
+              <div class="block motion">go to x: (-150) y: (55)</div>
+              <div class="block control">forever</div>
+              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
+              <div class="block motion indent">change y by (speed y)</div>
+              <div class="block control end">end forever</div>
+            </div>
+            <div class="callout why">
+              <strong>Why change speed y by GRAVITY instead of just changing y by -1?</strong> If we moved the player down by a fixed amount each frame, they'd fall at a constant speed — like a slow elevator. Real gravity accelerates objects: the longer you fall, the faster you go. Each frame, GRAVITY (-1) is added to speed y, making speed y more and more negative, which makes the player fall faster and faster. That's acceleration!
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag. The player should fall off the screen — they accelerate as they go. Don't worry that they fall through the floor for now — that's exactly what we'll fix next!
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 3 — Detecting the Ground
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">3</span>
+        Detecting the Ground
+      </h2>
+
+      <p>Now we'll make the player stop when they hit the level. We'll detect when the player overlaps the level colour and then nudge them back out. We'll wrap this nudging logic in a custom block that runs invisibly, so the player appears to land cleanly on the ground.</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>Inside the forever loop, directly below the <strong>change y by (speed y)</strong> block, add an <strong>if &lt;&gt; then</strong> block from <strong>Control</strong>.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>From <strong>Sensing</strong> (light blue), drag a <strong>touching color [ ]?</strong> block into the condition slot of the if block. Click the coloured square in the block and use the colour picker (the eyedropper tool) to click on the purple level colour in the stage. The block's colour swatch should now match your level.</p>
+            <div class="callout tip">
+              <strong>Tip!</strong> Zoom into the stage a little before using the eyedropper — it's easier to pick exactly the right pixel of your level colour.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the if block, we need to push the player back up out of the ground. The safest way is to move them up one pixel at a time until they're no longer touching the level. From <strong>Control</strong>, place a <strong>repeat until &lt;&gt;</strong> block inside the if. In its condition, put a <strong>not</strong> block (from <strong>Operators</strong>, green) containing another <strong>touching color [ ]?</strong> block with the same level colour.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the repeat until loop, add a <strong>change y by (1)</strong> block. This nudges the player up by one pixel each pass until they're clear of the ground.</p>
+            <div class="callout why">
+              <strong>Why move up one pixel at a time?</strong> If we simply moved back by the same distance we fell, we could overshoot — the player would float above the ground or bounce around. Moving just one pixel at a time guarantees we stop at precisely the surface, no matter how fast the player was falling.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>After the repeat until loop (but still inside the outer if block), add a <strong>set [speed y ▾] to (0)</strong> block. This resets the vertical speed to zero when the player lands — otherwise they'd immediately start falling again.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Now let's make this nudging invisible. From the <strong>My Blocks</strong> category (pink), click <strong>Make a Block</strong>. Name it <code>Fix Overlap</code>. Crucially, tick the box that says <strong>Run without screen refresh</strong>, then click OK.</p>
+            <div class="callout why">
+              <strong>Why "Run without screen refresh"?</strong> Without this option, Scratch would show the player visibly sliding up through the ground one pixel at a time each frame — it would look terrible! With this option ticked, the entire nudge-out loop finishes in the same frame before the screen updates, so the player appears to land cleanly and instantly.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>A new <strong>define Fix Overlap</strong> block appears in your scripts area. Drag the <strong>repeat until</strong> loop (from inside the if block) and attach it underneath the define block. Replace it in the if block with the new <strong>Fix Overlap</strong> block.</p>
+            <div class="scratch-blocks">
+              <div class="block control">forever</div>
+              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
+              <div class="block motion indent">change y by (speed y)</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block looks indent2">Fix Overlap</div>
+              <div class="block variables indent2">set [speed y ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end forever</div>
+            </div>
+            <div class="scratch-blocks">
+              <div class="block looks">define Fix Overlap  ⚡ run without screen refresh</div>
+              <div class="block control">repeat until &lt;not &lt;touching color [#9966ff]?&gt;&gt;</div>
+              <div class="block motion indent">change y by (1)</div>
+              <div class="block control end">end repeat</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: Player sprite scripts area showing the forever loop with the gravity, change y, and colour-collision if block; plus the separate "define Fix Overlap" custom block definition below]</div>
+        <figcaption>The gravity loop with ground collision, and the Fix Overlap custom block definition</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag. The player should now fall and land cleanly on the floor without sinking in. Try starting the player at different heights — they should always settle neatly on the surface.
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 4 — Jumping and Horizontal Movement
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">4</span>
+        Jumping and Horizontal Movement
+      </h2>
+
+      <p>Now for the fun part — making the player controllable! We'll add a jump, left and right movement, and importantly some <em>friction</em> so the player slows down naturally instead of sliding forever. We're still working on the <strong>Player</strong> sprite.</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>At the very top of the forever loop (above the gravity change), add an <strong>if &lt;key [up arrow ▾] pressed?&gt; then</strong> block from <strong>Control</strong> and <strong>Sensing</strong>. Inside it, add a <strong>set [speed y ▾] to (12)</strong> block.</p>
+            <div class="callout why">
+              <strong>Why set speed y to 12?</strong> Setting speed y to a large positive number gives the player an immediate upward burst of velocity. Gravity then gradually reduces this speed each frame until the player starts falling again — exactly like a real jump arc!
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Make a new variable. Name it <code>speed_x</code> and select <strong>For this sprite only</strong>. This will track how fast the player is moving left or right.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Back in the setup code (at the top, under <strong>when 🚩 clicked</strong>), add a <strong>set [speed_x ▾] to (0)</strong> block alongside the other initialisations.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the forever loop, below the jump block, add an <strong>if &lt;key [left arrow ▾] pressed?&gt; then</strong> block. Inside it, add <strong>change [speed_x ▾] by (-1.5)</strong>.</p>
+            <div class="callout why">
+              <strong>Why change speed_x instead of set it?</strong> Changing (adding to) the speed each frame means the player accelerates gradually — they build up speed rather than jumping instantly to full speed. This feels much more natural and satisfying to control.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Add another <strong>if &lt;key [right arrow ▾] pressed?&gt; then</strong> block below. Inside it, add <strong>change [speed_x ▾] by (1.5)</strong>.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Below the left/right key checks, add a <strong>set [speed_x ▾] to ((speed_x) * (0.8))</strong> block. This multiplies speed_x by 0.8 every single frame, which gradually shrinks it towards zero — simulating friction.</p>
+            <div class="callout why">
+              <strong>Why multiply by 0.8?</strong> Any value between 0 and 1 will cause the speed to shrink each frame. A value close to 1 (like 0.95) feels slippery; a value closer to 0 (like 0.5) stops the player very abruptly. 0.8 gives a nice responsive feel — the player slows down noticeably but not harshly.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Below the resistance line and above the gravity line, add a <strong>change x by (speed_x)</strong> block to actually move the player horizontally each frame.</p>
+            <div class="scratch-blocks">
+              <div class="block control">forever</div>
+              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">set [speed y ▾] to (12)</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by (-1.5)</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by (1.5)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (0.8))</div>
+              <div class="block motion indent">change x by (speed_x)</div>
+              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
+              <div class="block motion indent">change y by (speed y)</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block looks indent2">Fix Overlap</div>
+              <div class="block variables indent2">set [speed y ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end forever</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: Player sprite scripts showing the full forever loop with jump (up arrow), left and right key checks, resistance multiplication, change x by speed_x, then gravity and ground collision]</div>
+        <figcaption>The main game loop with jumping and horizontal movement added</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag and use the arrow keys. The player should walk left and right (slowing down when you let go) and jump with the up arrow. Notice there's no left/right wall collision yet — the player walks straight through the stairs. We'll fix that in the next section!
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 5 — Smooth Collision Detection: "Move in Steps"
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">5</span>
+        Smooth Collision Detection: "Move in Steps"
+      </h2>
+
+      <p>Right now our collision system has a problem: the player can walk straight through walls, and at high speeds might sink deep into the ground before the collision check catches it. We're going to replace the old movement code with a much smarter technique: instead of moving the player a large distance and then backing them out, we'll move in many tiny steps and stop the moment a collision is detected.</p>
+
+      <p>This is the most important part of this lesson, so take your time with it!</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>From <strong>My Blocks</strong>, click <strong>Make a Block</strong>. Name it <code>Move - in steps</code>. Click <strong>Add an input (number or text)</strong> and label it <code>steps</code>. Make sure <strong>Run without screen refresh</strong> is ticked. Click OK.</p>
+            <div class="callout why">
+              <strong>Why "Run without screen refresh" again?</strong> This custom block will loop many times per frame doing tiny movements. If it refreshed the screen after every micro-step, the game would slow to a crawl. With this option on, all the micro-steps happen invisibly in the same frame, so the game runs at full speed.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Make a new variable called <code>last_value</code>, for <strong>this sprite only</strong>. We'll use this to remember the player's position just before each micro-step, so we can undo the move if a collision happens.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>In the <strong>define Move - in steps (steps)</strong> block, add a <strong>repeat (steps)</strong> loop. All of the movement and collision code will go inside this loop.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the repeat loop, handle the <strong>horizontal (X) movement</strong> first:</p>
+            <ul style="margin: 0.5rem 0 0.5rem 1rem;">
+              <li>Add <strong>set [last_value ▾] to (x position)</strong> — save where we are before moving.</li>
+              <li>Add <strong>change x by ((speed_x) / (steps))</strong> — move a tiny fraction of the total distance.</li>
+              <li>Add an <strong>if &lt;touching color [#9966ff]?&gt; then</strong> block. Inside it, add <strong>set x to (last_value)</strong> and <strong>set [speed_x ▾] to (0)</strong>.</li>
+            </ul>
+            <div class="callout why">
+              <strong>Why divide speed_x by steps?</strong> We want to travel the full distance of <em>speed_x</em> pixels total, but spread it over many tiny steps. If we take 10 steps, each step moves 1/10 of the total distance. That way the player ends up in exactly the right place — but we get to check for collisions after each tiny move.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Directly below the X collision block (still inside the repeat loop), handle the <strong>vertical (Y) movement</strong>:</p>
+            <ul style="margin: 0.5rem 0 0.5rem 1rem;">
+              <li>Add <strong>set [last_value ▾] to (y position)</strong> — save the Y position before moving.</li>
+              <li>Add <strong>change y by ((speed y) / (steps))</strong> — move a tiny fraction vertically.</li>
+              <li>Add an <strong>if &lt;touching color [#9966ff]?&gt; then</strong> block. Inside it, add <strong>set y to (last_value)</strong> and <strong>set [speed y ▾] to (0)</strong>.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Here's what the complete <strong>define Move - in steps</strong> block looks like so far:</p>
+            <div class="scratch-blocks">
+              <div class="block looks">define Move - in steps (steps)  ⚡ run without screen refresh</div>
+              <div class="block control">repeat (steps)</div>
+              <div class="block variables indent">set [last_value ▾] to (x position)</div>
+              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block motion indent2">set x to (last_value)</div>
+              <div class="block variables indent2">set [speed_x ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [last_value ▾] to (y position)</div>
+              <div class="block motion indent">change y by ((speed y) / (steps))</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block motion indent2">set y to (last_value)</div>
+              <div class="block variables indent2">set [speed y ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end repeat</div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Now wire up the main loop to use this new block. In the forever loop, <strong>remove</strong> the <strong>change x by (speed_x)</strong> block, the <strong>change y by (speed y)</strong> block, and the old <strong>if touching color / Fix Overlap</strong> block (you can also delete the Fix Overlap definition — it's no longer needed). Replace them all with a single <strong>Move - in steps ( )</strong> block.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>For the <code>steps</code> input, we need to pass in a number that's large enough to ensure we never move more than 1 pixel per micro-step. That number is the total distance we're about to travel. From <strong>Operators</strong> (green), build: <code>(abs of (speed y)) + (abs of (speed_x))</code>. The <strong>abs</strong> (absolute value) block is found inside the green <strong>( ) of ( )</strong> maths block — click its dropdown and choose <strong>abs</strong>. This converts negative speeds to positive numbers for the calculation.</p>
+            <div class="scratch-blocks">
+              <div class="block control">forever</div>
+              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">set [speed y ▾] to (12)</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by (-1.5)</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by (1.5)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (0.8))</div>
+              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
+              <div class="block looks indent">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
+              <div class="block control end">end forever</div>
+            </div>
+            <div class="callout why">
+              <strong>Why use abs(speed y) + abs(speed_x)?</strong> This gives us the total number of pixels we're about to move in this frame (combining both directions). By running that many micro-steps, we guarantee each step is at most 1 pixel — which means a collision is always caught before we've moved more than 1 pixel into a wall or floor. No tunnelling!
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The "define Move - in steps (steps)" custom block showing the full repeat loop with X then Y movement and colour collision checks for each axis]</div>
+        <figcaption>The complete "Move in steps" custom block — the collision detection engine of our platformer</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag and test the movement. Now try running into the stair steps — the player should stop and slide against them rather than passing through. Try bumping your head on the underside of the floating platform too. Solid collisions all round!
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SECTION 6 — Fixing the Jump and Fine-Tuning
+         ===================================================================== -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">6</span>
+        Fixing the Jump and Fine-Tuning
+      </h2>
+
+      <p>We have one last problem: hold the up arrow key and the player flies off into the sky like a rocket! We need to restrict jumping so it only works when the player is on the ground (or very close to it). We'll also fix a bug where the player can stick to ceilings, and then extract the remaining magic numbers into named constants so the game is easy to tweak.</p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>Make a new variable called <code>falling</code>, for <strong>this sprite only</strong>. This will count how many frames the player has been off the ground. When it's 0, the player is on the ground; when it's large, the player has been in the air a while.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>At the very top of the <strong>define Move - in steps (steps)</strong> block (before the repeat loop), add a <strong>change [falling ▾] by (1)</strong> block. Every frame, this increments the airborne counter.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Inside the Y-axis collision check in <strong>Move - in steps</strong> (the if block that runs when the player hits a floor or ceiling), add a check before resetting speed y. Wrap a new <strong>if &lt;(speed y) &lt; (0)&gt; then</strong> block around a <strong>set [falling ▾] to (0)</strong> block, and place this above the <strong>set [speed y ▾] to (0)</strong> line.</p>
+            <div class="callout why">
+              <strong>Why check that speed y is negative (less than 0)?</strong> A negative speed y means the player was moving <em>downwards</em> when the collision happened — that means they hit a floor. A positive speed y means they were moving <em>upwards</em> and hit a ceiling. We only want to reset the falling counter for floor landings. Without this check, a player holding the jump key could stick to the ceiling!
+            </div>
+            <div class="scratch-blocks">
+              <div class="block looks">define Move - in steps (steps)  ⚡ run without screen refresh</div>
+              <div class="block variables">change [falling ▾] by (1)</div>
+              <div class="block control">repeat (steps)</div>
+              <div class="block variables indent">set [last_value ▾] to (x position)</div>
+              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block motion indent2">set x to (last_value)</div>
+              <div class="block variables indent2">set [speed_x ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [last_value ▾] to (y position)</div>
+              <div class="block motion indent">change y by ((speed y) / (steps))</div>
+              <div class="block control indent">if &lt;touching color [#9966ff]?&gt; then</div>
+              <div class="block motion indent2">set y to (last_value)</div>
+              <div class="block control indent2">if &lt;(speed y) &lt; (0)&gt; then</div>
+              <div class="block variables indent2" style="margin-left:4.5rem;">set [falling ▾] to (0)</div>
+              <div class="block control indent2">end</div>
+              <div class="block variables indent2">set [speed y ▾] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end repeat</div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Now go back to the main forever loop. Find the <strong>if &lt;key [up arrow ▾] pressed?&gt; then</strong> block. Wrap the <strong>set [speed y ▾] to (12)</strong> block inside a new inner <strong>if &lt;(falling) &lt; (3)&gt; then</strong> block.</p>
+            <div class="callout why">
+              <strong>Why &lt; 3 instead of = 0?</strong> This gives the player a 2-frame window to jump after walking off the edge of a platform. Players often press jump slightly too late, and without this forgiveness they'd feel cheated. This trick is called <em>coyote time</em> — named after a certain cartoon coyote who keeps running briefly after going off a cliff! It makes the game feel fair without any cheating.
+            </div>
+            <div class="scratch-blocks">
+              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
+              <div class="block control indent2">if &lt;(falling) &lt; (3)&gt; then</div>
+              <div class="block variables indent2" style="margin-left:4.5rem;">set [speed y ▾] to (12)</div>
+              <div class="block control indent2">end</div>
+              <div class="block control indent">end</div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Now let's replace the remaining "magic numbers" with named constants. Make three new variables, all <strong>for all sprites</strong>: <code>JUMP FORCE</code>, <code>ACCELERATION</code>, and <code>RESISTANCE</code>.</p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>At the top of the <strong>when 🚩 clicked</strong> script, add these three set blocks alongside the GRAVITY initialisation:</p>
+            <div class="scratch-blocks">
+              <div class="block variables">set [JUMP FORCE ▾] to (12)</div>
+              <div class="block variables">set [ACCELERATION ▾] to (1.5)</div>
+              <div class="block variables">set [RESISTANCE ▾] to (0.8)</div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Replace the hard-coded numbers throughout the forever loop with the new variables:</p>
+            <ul style="margin: 0.5rem 0 0.5rem 1rem;">
+              <li>Change <strong>set [speed y ▾] to (12)</strong> → <strong>set [speed y ▾] to (JUMP FORCE)</strong></li>
+              <li>Change <strong>change [speed_x ▾] by (-1.5)</strong> → <strong>change [speed_x ▾] by ((0) - (ACCELERATION))</strong></li>
+              <li>Change <strong>change [speed_x ▾] by (1.5)</strong> → <strong>change [speed_x ▾] by (ACCELERATION)</strong></li>
+              <li>Change <strong>set [speed_x ▾] to ((speed_x) * (0.8))</strong> → <strong>set [speed_x ▾] to ((speed_x) * (RESISTANCE))</strong></li>
+            </ul>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>Here's the complete final version of the <strong>when 🚩 clicked</strong> script:</p>
+            <div class="scratch-blocks">
+              <div class="block event">when 🚩 clicked</div>
+              <div class="block variables">set [GRAVITY ▾] to (-1)</div>
+              <div class="block variables">set [JUMP FORCE ▾] to (12)</div>
+              <div class="block variables">set [ACCELERATION ▾] to (1.5)</div>
+              <div class="block variables">set [RESISTANCE ▾] to (0.8)</div>
+              <div class="block variables">set [speed_x ▾] to (0)</div>
+              <div class="block variables">set [speed y ▾] to (0)</div>
+              <div class="block motion">go to x: (-150) y: (55)</div>
+              <div class="block control">forever</div>
+              <div class="block control indent">if &lt;key [up arrow ▾] pressed?&gt; then</div>
+              <div class="block control indent2">if &lt;(falling) &lt; (3)&gt; then</div>
+              <div class="block variables indent2" style="margin-left:4.5rem;">set [speed y ▾] to (JUMP FORCE)</div>
+              <div class="block control indent2">end</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [left arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by ((0) - (ACCELERATION))</div>
+              <div class="block control indent">end</div>
+              <div class="block control indent">if &lt;key [right arrow ▾] pressed?&gt; then</div>
+              <div class="block variables indent2">change [speed_x ▾] by (ACCELERATION)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [speed_x ▾] to ((speed_x) * (RESISTANCE))</div>
+              <div class="block variables indent">change [speed y ▾] by (GRAVITY)</div>
+              <div class="block looks indent">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
+              <div class="block control end">end forever</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The complete "when green flag clicked" script for the Player sprite, showing all constants being set, then the forever loop with the jump (falling &lt; 3 check), left/right movement, resistance, gravity, and the Move in steps call]</div>
+        <figcaption>The complete Player script — all magic numbers replaced with named constants</figcaption>
+      </figure>
+
+      <div class="callout tip">
+        <strong>Tip!</strong> Try adjusting the constants! Change <strong>GRAVITY</strong> to <code>-1.5</code> for a heavier feel, <strong>JUMP FORCE</strong> to <code>20</code> for a super jump, or <strong>RESISTANCE</strong> to <code>0.95</code> for an icy floor. Because all these values are in one place at the top of the script, experimenting is easy.
+      </div>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag and put your platformer through its paces. Walk up the stairs, jump onto the floating platform, run into walls, and try jumping just after walking off a ledge. Everything should feel solid and responsive. Well done — you've built a working physics engine from scratch!
+      </div>
+
+    </section>
+
+    <!-- =====================================================================
+         SUMMARY
+         ===================================================================== -->
+    <section class="summary card">
+      <h2>✅ What We've Built</h2>
+      <p>In this lesson we built a complete physics-based player controller entirely from scratch. The player falls with realistic accelerating gravity, jumps cleanly, walks left and right with smooth acceleration and friction, and collides accurately against the level using the "Move in steps" sub-step technique — which prevents the player from ever tunnelling through a surface no matter how fast they're moving.</p>
+      <p>We also added a "coyote jump" window using the <strong>falling</strong> counter, so players can jump briefly after stepping off a ledge — a small touch that makes a big difference to how fair and fun the game feels.</p>
+      <p>In Lesson 2, we'll open up the level to include multiple screens, explore sprite-based collision detection, and start tackling sloping inclines — taking our platformer engine to the next level!</p>
+    </section>
+
+  </main>
+
+  <nav class="lesson-navigation" aria-label="Lesson navigation">
+    <a href="../index.html" class="btn btn-secondary">All Lessons</a>
+    <a href="../lesson-2/index.html" class="btn btn-primary">Lesson 2 →</a>
+  </nav>
+
+  <footer class="site-footer">
+    <p>
+      Based on
+      <a href="https://www.youtube.com/playlist?list=PLy4zsTUHwGJIATydhFeZa5pspLZR7yE__"
+         target="_blank" rel="noopener">griffpatch's Code a Platformer Game</a> series
+    </p>
+  </footer>
+
+</body>
+</html>

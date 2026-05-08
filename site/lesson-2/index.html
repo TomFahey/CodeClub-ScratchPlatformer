@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lesson 2: Levels &amp; Scene Management | Scratch Platformer</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="header-inner">
+      <a href="../index.html" class="site-title">🐱 Scratch Platformer</a>
+      <span class="header-subtitle">Based on griffpatch's tutorial series</span>
+    </div>
+  </header>
+
+  <nav class="breadcrumb" aria-label="Breadcrumb">
+    <a href="../index.html">All Lessons</a>
+    <span aria-hidden="true"> › </span>
+    <span>Lesson 2</span>
+  </nav>
+
+  <main class="lesson-content">
+
+    <div class="lesson-header">
+      <div class="lesson-badge">Lesson 2</div>
+      <h1>Levels &amp; Scene Management</h1>
+      <p class="lesson-intro">
+        Transform the single-screen prototype into a multi-scene world — switching from colour-based
+        collisions to a faster sprite-based system, refactoring the game loop into tidy named
+        broadcasts, and building smooth scene transitions with a clever spawn-collision fix.
+      </p>
+    </div>
+
+    <section class="overview card">
+      <h2>📋 What We'll Build</h2>
+      <ul>
+        <li>A dedicated <strong>Level</strong> sprite with multiple scene costumes</li>
+        <li>Faster, more flexible sprite-touching collision detection</li>
+        <li>A <strong>Check Touching Solid</strong> custom block to centralise all collision logic</li>
+        <li>A broadcast-driven game loop (<strong>Game Loop</strong>, <strong>Tick - Player</strong>, <strong>Tick - Last</strong>)</li>
+        <li>Tidy custom blocks for controls: <strong>Controls - Up and Down</strong> and <strong>Controls - Left and Right</strong></li>
+        <li>A <strong>SCENE #</strong> variable that drives costume switching and scene transitions</li>
+        <li>Edge-of-screen detection so the player walks seamlessly between scenes</li>
+        <li>A <strong>Fix Collision in Direction</strong> "wiggle" algorithm that prevents the player spawning inside the ground</li>
+      </ul>
+    </section>
+
+    <!-- =================================================================
+         SECTION 1 — The Level Sprite
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">1</span>
+        Replacing the Backdrop with a Level Sprite
+      </h2>
+
+      <p>
+        In Lesson 1 we drew our level directly onto the <strong>Stage backdrop</strong> and used a
+        <strong>touching colour?</strong> block to detect collisions. That works fine for one colour,
+        but as soon as we want colourful levels we'd need a separate colour check for <em>every</em>
+        shade — and each extra check slows the game down. The fix is to move the level drawing into
+        its own sprite so we can use a single, fast <strong>touching (Level)?</strong> block instead.
+      </p>
+
+      <div class="callout why">
+        <strong>Why?</strong> Sprite-touching is significantly faster in Scratch than colour-touching,
+        and it detects collisions no matter how many colours are used in the costume. This means we
+        can make beautiful, colourful levels without writing extra collision code or slowing the game.
+      </div>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              Click the <strong>Choose a Sprite</strong> button and create a brand-new, blank sprite.
+              Name it <strong>Level</strong>.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Click the <strong>Stage</strong> (bottom-right of the sprite list), then open the
+              <strong>Backdrops</strong> tab. Click on your level backdrop costume so it is selected,
+              then drag it across into the <strong>Level sprite's</strong> costume panel. This moves
+              the level artwork into the new sprite.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Back in the Stage's Backdrops tab, make sure nothing is selected, then click
+              <strong>Delete</strong> to remove the old level backdrop, leaving the stage blank.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Click the <strong>Level</strong> sprite and open its <strong>Costumes</strong> tab.
+              If there is an empty placeholder costume at the top, select it and delete it so only
+              your level artwork remains.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Open the <strong>Code</strong> tab for the <strong>Level</strong> sprite and build this
+              short startup script. Because the Level is now a sprite (not a backdrop), Scratch won't
+              automatically centre it — so we position it at (0, 0) and push it behind all other sprites:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when 🚩 clicked</div>
+              <div class="block motion">go to x: (0) y: (0)</div>
+              <div class="block looks">go to [back v] layer</div>
+            </div>
+            <div class="callout why">
+              <strong>Why?</strong> Sprites render in front of the backdrop by default. Without
+              <strong>go to [back v] layer</strong>, the Level sprite would draw on top of the player,
+              hiding them completely!
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Now click the <strong>Player (Sprite1)</strong> sprite and find the
+              <strong>define Move - in steps</strong> script. Replace the two
+              <strong>touching color (#9966ff)?</strong> blocks — one in the horizontal check and one
+              in the vertical check — with <strong>touching (Level)?</strong>.
+            </p>
+            <div class="callout tip">
+              <strong>Tip!</strong> The <strong>touching (Level)?</strong> block is in the 🩵
+              <strong>Sensing</strong> category. Click the dropdown inside the block to choose
+              the <strong>Level</strong> sprite from the list.
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The Level sprite selected in the sprite list, showing its costume panel with the level artwork, and the Code tab with the when 🚩 clicked script]</div>
+        <figcaption>The Level sprite after moving the artwork across from the backdrop</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag. The level should look exactly the same
+        as before — but now the player will collide with <em>every</em> colour in the level, not
+        just the original purple. Try drawing a few extra coloured shapes in the Level costume and
+        confirm the player lands on them!
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 2 — Check Touching Solid
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">2</span>
+        Centralising Collision Detection
+      </h2>
+
+      <p>
+        Right now, every place in the code that needs to check for a collision contains its own
+        <strong>touching (Level)?</strong> block. As the game grows (moving platforms, lava, etc.)
+        we'd need to update every single one of those blocks. Instead, let's create one custom block
+        that handles all collision logic — so there's only <em>one</em> place to update in the future.
+      </p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              Make sure the <strong>Player (Sprite1)</strong> sprite is selected. In the
+              🟥 <strong>Variables</strong> category, click <strong>Make a Variable</strong> and
+              name it <strong>touching</strong>. Choose <strong>For this sprite only</strong>.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the 🟠 <strong>My Blocks</strong> (Custom Blocks) category, click
+              <strong>Make a Block</strong>. Name it <strong>Check Touching Solid</strong> and
+              tick the <strong>Run without screen refresh</strong> checkbox. Click OK.
+            </p>
+            <div class="callout why">
+              <strong>Why "Run without screen refresh"?</strong> This makes the custom block execute
+              instantly within the same game tick, rather than waiting for the next screen update.
+              Because we call this block inside the movement loop (which runs many times per frame),
+              it must be fast — otherwise the game will lag noticeably.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Build the <strong>define Check Touching Solid</strong> script. It simply checks whether
+              the player is touching the Level sprite and stores the result in the
+              <strong>touching</strong> variable:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Check Touching Solid</div>
+              <div class="block control">if &lt;touching (Level v)?&gt; then</div>
+              <div class="block variables indent">set [touching v] to (1)</div>
+              <div class="block control">else</div>
+              <div class="block variables indent">set [touching v] to (0)</div>
+              <div class="block control end">end</div>
+            </div>
+            <div class="callout why">
+              <strong>Why a variable instead of using the block directly in the if?</strong>
+              Scratch doesn't (yet!) let you drop a custom block directly into a condition — only
+              built-in reporter blocks can go there. Storing the result in a variable like
+              <strong>touching</strong> is the standard workaround, and it has a bonus: later we can
+              add more collision checks (e.g. <strong>touching (Lava)?</strong>) in this one block
+              and the rest of the code automatically benefits.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the <strong>define Move - in steps</strong> script, update both collision checks.
+              Before each <strong>if &lt;touching (Level)?&gt;</strong>, add a
+              <strong>Check Touching Solid</strong> block and change the condition to
+              <strong>(touching) &gt; 0</strong>:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Move - in steps (steps)</div>
+              <div class="block variables">change [falling v] by (1)</div>
+              <div class="block control">repeat (steps)</div>
+              <div class="block variables indent">set [last_value v] to (x position)</div>
+              <div class="block motion indent">change x by ((speed_x) / (steps))</div>
+              <div class="block custom indent">Check Touching Solid</div>
+              <div class="block control indent">if &lt;(touching) &gt; (0)&gt; then</div>
+              <div class="block motion indent2">set x to (last_value)</div>
+              <div class="block variables indent2">set [speed_x v] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block variables indent">set [last_value v] to (y position)</div>
+              <div class="block motion indent">change y by ((speed y) / (steps))</div>
+              <div class="block custom indent">Check Touching Solid</div>
+              <div class="block control indent">if &lt;(touching) &gt; (0)&gt; then</div>
+              <div class="block motion indent2">set y to (last_value)</div>
+              <div class="block control indent2">if &lt;(speed y) &lt; (0)&gt; then</div>
+              <div class="block variables indent2">set [falling v] to (0)</div>
+              <div class="block control indent2">end</div>
+              <div class="block variables indent2">set [speed y v] to (0)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end repeat</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag and play as normal. The movement and
+        collisions should feel identical to before — but the code is now much easier to extend later.
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 3 — Broadcast Game Loop & Tidy Controls
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">3</span>
+        Organising the Code: Broadcasts and Custom Blocks
+      </h2>
+
+      <p>
+        Our <strong>when 🚩 clicked</strong> script is getting long — it currently handles
+        initialisation, the game loop, jump controls, left/right controls, and movement all in one
+        place. Before adding multiple scenes we're going to break it apart into clearly named pieces.
+        This is a really good coding habit: small, named blocks are much easier to find and fix
+        later on.
+      </p>
+
+      <div class="callout why">
+        <strong>Why broadcasts instead of just one forever loop?</strong> A broadcast lets multiple
+        sprites respond to the same event. Right now we only have one player sprite, but soon we'll
+        add platforms, enemies, and UI elements — each of which can have its own
+        <strong>when I receive [Tick - Player]</strong> script. A single forever loop can only run
+        code in one place; broadcasts scale to a whole game engine.
+      </div>
+
+      <h3>Step A — Split the game loop into a broadcast</h3>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the <strong>Player (Sprite1)</strong> sprite, find the <strong>when 🚩 clicked</strong>
+              script. Remove the <strong>forever</strong> loop and all the blocks inside it from this
+              script. We're going to move those contents to a separate event.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Create a new <strong>when I receive [Game Loop]</strong> hat block (use the
+              🟡 <strong>Events</strong> category, choose <strong>broadcast</strong> and add a new
+              message called <strong>Game Loop</strong>). Inside a <strong>forever</strong> loop,
+              broadcast two new messages:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when I receive [Game Loop v]</div>
+              <div class="block control">forever</div>
+              <div class="block event indent">broadcast [Tick - Player v]</div>
+              <div class="block event indent">broadcast [Tick - Last v]</div>
+              <div class="block control end">end forever</div>
+            </div>
+            <div class="callout why">
+              <strong>Why "Tick"?</strong> A "tick" is one single frame of the game — like the tick
+              of a clock. At 30 frames per second, 30 ticks happen every second. Naming broadcasts
+              this way makes it immediately obvious they are frame-by-frame game updates.
+            </div>
+            <div class="callout why">
+              <strong>Why "Tick - Last"?</strong> Some logic (like checking whether the player walked
+              off the edge of the screen) must happen <em>after</em> all movement has been applied.
+              By putting it in a second broadcast that always runs after <strong>Tick - Player</strong>,
+              we guarantee the correct order — every single frame.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Create a <strong>when I receive [Tick - Player]</strong> script. This is where
+              all the per-frame player logic will live. For now it calls three blocks — we'll define
+              those next:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when I receive [Tick - Player v]</div>
+              <div class="block custom">Controls - Up and Down</div>
+              <div class="block custom">Controls - Left and Right</div>
+              <div class="block custom">Move - in steps ((abs of (speed y)) + (abs of (speed_x)))</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <h3>Step B — Create the Controls custom blocks</h3>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              Make a new custom block called <strong>Controls - Up and Down</strong>. Tick
+              <strong>Run without screen refresh</strong>. Move the jump check and gravity into it:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Controls - Up and Down</div>
+              <div class="block control">if &lt;key (up arrow v) pressed?&gt; then</div>
+              <div class="block control indent">if &lt;(falling) &lt; (3)&gt; then</div>
+              <div class="block variables indent2">set [speed y v] to (JUMP FORCE)</div>
+              <div class="block control indent">end</div>
+              <div class="block control end">end</div>
+              <div class="block variables">change [speed y v] by (GRAVITY)</div>
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Make another custom block called <strong>Controls - Left and Right</strong>, also with
+              <strong>Run without screen refresh</strong>. Move the arrow key checks and friction into it:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Controls - Left and Right</div>
+              <div class="block control">if &lt;key (left arrow v) pressed?&gt; then</div>
+              <div class="block variables indent">change [speed_x v] by ((0) - (ACCELERATION))</div>
+              <div class="block control end">end</div>
+              <div class="block control">if &lt;key (right arrow v) pressed?&gt; then</div>
+              <div class="block variables indent">change [speed_x v] by (ACCELERATION)</div>
+              <div class="block control end">end</div>
+              <div class="block variables">set [speed_x v] to ((speed_x) * (RESISTANCE))</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <h3>Step C — Create the Reset and Begin Level custom block</h3>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              Make a new custom block called <strong>Reset and Begin Level</strong>.
+              <em>Important:</em> do <strong>NOT</strong> tick "Run without screen refresh" this time —
+              this block contains broadcasts that need to happen across multiple frames.
+            </p>
+            <div class="callout why">
+              <strong>Why not "run without screen refresh" here?</strong> Setting up a scene involves
+              broadcasts that need to let <em>other</em> sprites respond (like the Level sprite
+              switching costumes). If we ran without screen refresh, those other scripts would never
+              get a chance to execute before we carry on.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Build the <strong>define Reset and Begin Level</strong> script. It resets all
+              player state and kicks off the game:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Reset and Begin Level</div>
+              <div class="block variables">set [SCENE # v] to (1)</div>
+              <div class="block variables">set [speed y v] to (0)</div>
+              <div class="block variables">set [speed_x v] to (0)</div>
+              <div class="block variables">set [falling v] to (99)</div>
+              <div class="block motion">go to x: (-174) y: (-55)</div>
+              <div class="block motion">point in direction (90)</div>
+              <div class="block event">broadcast [Change Scene v]</div>
+              <div class="block event">broadcast [Game Loop v]</div>
+            </div>
+            <div class="callout why">
+              <strong>Why set falling to 99?</strong> The jump check only allows jumping when
+              <strong>falling</strong> is less than 3, which means the player is on the ground.
+              Setting it to 99 at the start prevents the player from jumping in mid-air before they
+              have even landed — they must touch the ground first.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Update the <strong>when 🚩 clicked</strong> script so it only sets the physics
+              constants and then calls <strong>Reset and Begin Level</strong>. Also update
+              <strong>GRAVITY</strong> to <strong>-1.5</strong> and <strong>ACCELERATION</strong>
+              to <strong>2</strong> for snappier movement:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when 🚩 clicked</div>
+              <div class="block variables">set [GRAVITY v] to (-1.5)</div>
+              <div class="block variables">set [JUMP FORCE v] to (12)</div>
+              <div class="block variables">set [ACCELERATION v] to (2)</div>
+              <div class="block variables">set [RESISTANCE v] to (0.8)</div>
+              <div class="block custom">Reset and Begin Level</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The Player sprite's scripts panel showing four separate, neatly labelled script columns: when 🚩 clicked, define Reset and Begin Level, when I receive [Game Loop], when I receive [Tick - Player], define Controls - Up and Down, define Controls - Left and Right]</div>
+        <figcaption>After refactoring, the Player sprite has several small, clearly-named scripts instead of one giant one</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag. The game should feel exactly the same as
+        before — but notice how much cleaner and easier to read the code is now. Movement might feel
+        slightly faster because we increased ACCELERATION to 2.
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 4 — Multiple Scene Costumes
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">4</span>
+        Designing Multiple Scenes
+      </h2>
+
+      <p>
+        Now for the exciting part — giving our world more than one screen to explore! We'll add extra
+        costumes to the <strong>Level</strong> sprite (one per scene) and introduce a
+        <strong>SCENE #</strong> variable so the game knows which scene to show.
+      </p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              Click the <strong>Level</strong> sprite and open its <strong>Costumes</strong> tab.
+              Rename the existing costume to exactly <strong>Scene1</strong> (capital S, no space
+              before the number — this is important!).
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Right-click on <strong>Scene1</strong> in the costume list and choose
+              <strong>Duplicate</strong>. Name the new costume <strong>Scene2</strong>.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Design Scene2 however you like! A quick trick is to flip the scene horizontally — this
+              automatically makes the right-hand side of Scene2 match the left-hand side of Scene1,
+              so the player's floor never has a sudden height change at the border.
+            </p>
+            <div class="callout tip">
+              <strong>Tip — The Centering Trick:</strong> Scratch flips around the costume's centre
+              point, which can leave things off-centre. To flip around the <em>canvas</em> centre:
+              select the Rectangle tool, draw the biggest rectangle that fits the canvas, then drag
+              it so it snaps to the exact middle of the canvas. Now use the Selection tool to
+              select <em>everything</em>, and click Flip Horizontal. Finally, delete the big rectangle.
+              Everything will now be perfectly centred!
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Create a third costume called <strong>Scene3</strong> (duplicate Scene2 and modify it).
+              The costume name is automatically set to Scene3 when you duplicate, which is handy!
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Now let's make the Level sprite respond to scene changes. In the
+              <strong>Level</strong> sprite's Code tab, add a new script using
+              <strong>when I receive [Change Scene]</strong>. Use a <strong>join</strong> block from
+              🟢 <strong>Operators</strong> to combine the word <em>"Scene"</em> with the
+              <strong>SCENE #</strong> variable, then switch costume to that result:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when I receive [Change Scene v]</div>
+              <div class="block looks">switch costume to (join [Scene] (SCENE #))</div>
+            </div>
+            <div class="callout why">
+              <strong>Why join "Scene" with SCENE #?</strong> It constructs the costume name
+              dynamically. When <strong>SCENE #</strong> is 1, this becomes <em>"Scene1"</em>;
+              when it's 2, it becomes <em>"Scene2"</em>, and so on. This means we never need to
+              change this code even if we add 10 more scenes — just add more costumes with the right
+              names!
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The Level sprite's Costumes tab showing three costume thumbnails labelled Scene1, Scene2, Scene3]</div>
+        <figcaption>Three scene costumes in the Level sprite — name them exactly "Scene1", "Scene2", "Scene3"</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> In the Scratch variables display, manually click on
+        <strong>SCENE #</strong> and change it to 2, then broadcast <strong>Change Scene</strong>
+        by clicking the block. The level background should switch to Scene2. Change it back to 1
+        to return to the start.
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 5 — Walking Between Scenes
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">5</span>
+        Walking Off the Edge of the Screen
+      </h2>
+
+      <p>
+        We have multiple scenes, but the player can't get to them yet! Let's detect when the player
+        walks off the left or right edge and teleport them to the opposite side of the next (or
+        previous) scene.
+      </p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the <strong>Player (Sprite1)</strong> sprite, find the
+              <strong>when I receive [Game Loop]</strong> script. After the
+              <strong>broadcast [Tick - Player]</strong> line, add a new broadcast:
+              <strong>broadcast [Tick - Last]</strong>.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Create a new <strong>when I receive [Tick - Last]</strong> script. Add an
+              <strong>if</strong> block that checks whether the player has gone off the right edge.
+              The stage is 480 pixels wide (−240 to +240), so we use 235 as a safe threshold a few
+              pixels inside the edge:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when I receive [Tick - Last v]</div>
+              <div class="block control">if &lt;(x position) &gt; (235)&gt; then</div>
+              <div class="block variables indent">change [SCENE # v] by (1)</div>
+              <div class="block event indent">broadcast [Change Scene v]</div>
+              <div class="block motion indent">set x to (-235)</div>
+              <div class="block control end">end</div>
+              <div class="block control">if &lt;(x position) &lt; (-235)&gt; then</div>
+              <div class="block variables indent">change [SCENE # v] by (-1)</div>
+              <div class="block event indent">broadcast [Change Scene v]</div>
+              <div class="block motion indent">set x to (235)</div>
+              <div class="block control end">end</div>
+            </div>
+            <div class="callout why">
+              <strong>Why check in "Tick - Last" and not "Tick - Player"?</strong> Movement is
+              calculated in <strong>Tick - Player</strong>. We need to check the <em>final</em>
+              position after all that movement is done before deciding to change scene — otherwise
+              the scene might switch halfway through a movement calculation, causing glitchy behaviour.
+              <strong>Tick - Last</strong> always runs after <strong>Tick - Player</strong>, so the
+              position is fully settled when we check it.
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The when I receive [Tick - Last] script showing the two if blocks for x > 235 and x &lt; -235, with change SCENE # and broadcast Change Scene blocks inside each]</div>
+        <figcaption>The Tick - Last script detects when the player exits either side of the screen</figcaption>
+      </figure>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag and walk the player all the way to the right
+        edge. Do they appear on the left side of Scene2? Now walk back — do they return to Scene1?
+        Try walking further right to reach Scene3!
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 6 — Begin Scene Custom Block
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">6</span>
+        Wrapping Scene Transitions into a Reusable Block
+      </h2>
+
+      <p>
+        The left-edge and right-edge transition code is nearly identical — and we'll soon be adding
+        more steps to it (the collision fix). Rather than duplicating everything, let's wrap it in a
+        custom block called <strong>Begin Scene #</strong> so we only have to write (and maintain)
+        the transition logic once.
+      </p>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the <strong>Player</strong> sprite's My Blocks, create a new custom block.
+              Name it: <strong>Begin Scene # (scene #) go to x: (x)</strong>.
+              Add two <em>number inputs</em>: one called <strong>scene #</strong> and one called
+              <strong>x</strong>. Do <strong>NOT</strong> tick "Run without screen refresh".
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Build the define script. Notice we <strong>set x</strong> to the target position
+              <em>before</em> broadcasting <strong>Change Scene</strong>, so the player is already
+              at the right place when the new scene appears. Then we stop the current game loop,
+              wait a moment for the scene to load, and restart:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Begin Scene # (scene #) go to x: (x)</div>
+              <div class="block variables">set [SCENE # v] to (scene #)</div>
+              <div class="block motion">set x to (x)</div>
+              <div class="block event">broadcast [Change Scene v]</div>
+              <div class="block control">stop [other scripts in sprite v]</div>
+              <div class="block control">wait (0) seconds</div>
+              <div class="block custom">Fix Collision in Direction (0)</div>
+              <div class="block event">broadcast [Game Loop v] and wait</div>
+            </div>
+            <div class="callout why">
+              <strong>Why "stop other scripts in sprite"?</strong> The game loop is still running
+              when the scene transition begins. If we don't stop it, it will carry on moving the
+              player and checking collisions on the <em>old</em> scene while we're trying to set up
+              the new one, causing all sorts of strange bugs. Stopping it first means we can safely
+              do the setup, then restart cleanly with a fresh <strong>broadcast [Game Loop]</strong>.
+            </div>
+            <div class="callout why">
+              <strong>Why "wait (0) seconds"?</strong> When we <strong>broadcast [Change Scene]</strong>
+              without "and wait", the costume switch is <em>queued</em> rather than happening
+              immediately. A <strong>wait (0) seconds</strong> pauses just long enough for Scratch
+              to process that queued event, so by the time we run the collision fix the Level costume
+              has actually changed.
+            </div>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Update the <strong>when I receive [Tick - Last]</strong> script to use the new block
+              instead of the inline code. Pass in the full calculated scene number and the target
+              x position:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block event">when I receive [Tick - Last v]</div>
+              <div class="block control">if &lt;(x position) &gt; (235)&gt; then</div>
+              <div class="block custom indent">Begin Scene # ((SCENE #) + (1)) go to x: (-235)</div>
+              <div class="block control end">end</div>
+              <div class="block control">if &lt;(x position) &lt; (-235)&gt; then</div>
+              <div class="block custom indent">Begin Scene # ((SCENE #) - (1)) go to x: (235)</div>
+              <div class="block control end">end</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Scene transitions should work just as before — but now we have
+        a single, clean block to maintain. You'll also notice a placeholder for the collision fix
+        we're about to build in the next section!
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SECTION 7 — Fix Collision in Direction
+         ================================================================= -->
+    <section class="tutorial-section">
+      <h2 class="section-title">
+        <span class="section-number">7</span>
+        Fixing Spawn Collisions: The Wiggle Algorithm
+      </h2>
+
+      <p>
+        Here's a problem you'll run into: when the player moves to a new scene, they might
+        appear <em>inside</em> the ground or a wall. This happens because the floor height at the
+        right edge of Scene 1 might not perfectly match the left edge of Scene 2 — and in Scratch,
+        "pixel perfect" is never guaranteed. If the player spawns inside solid ground, the collision
+        system traps them there permanently. We need to automatically nudge them to safety.
+      </p>
+
+      <div class="callout why">
+        <strong>Why does this happen?</strong> When we <strong>set x to (235)</strong> (reappearing
+        on the right side of the previous scene), the player is placed at a fixed x coordinate but
+        at whatever y coordinate they had before — which might be below the new scene's floor level.
+        The collision detection then sees them inside the solid and refuses to let them move in
+        any direction, locking them in place.
+      </div>
+
+      <ol class="steps">
+
+        <li>
+          <div class="step-content">
+            <p>
+              In the <strong>Player</strong> sprite, create two new variables (both <strong>For this
+              sprite only</strong>): <strong>temp</strong> and <strong>distance</strong>.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Make a new custom block called <strong>Fix Collision in Direction (dir)</strong> —
+              add a <em>number input</em> named <strong>dir</strong>. This time,
+              <strong>DO</strong> tick <strong>Run without screen refresh</strong> — it needs to
+              run fast.
+            </p>
+          </div>
+        </li>
+
+        <li>
+          <div class="step-content">
+            <p>
+              Build the define script. This is the "wiggle" algorithm — it points the player in a
+              direction (upward to start) and moves them a little further each loop until they're
+              no longer stuck:
+            </p>
+            <div class="scratch-blocks">
+              <div class="block custom">define Fix Collision in Direction (dir)</div>
+              <div class="block variables">set [temp v] to (direction)</div>
+              <div class="block variables">set [distance v] to (1)</div>
+              <div class="block motion">point in direction (dir)</div>
+              <div class="block control">repeat (64)</div>
+              <div class="block custom indent">Check Touching Solid</div>
+              <div class="block control indent">if &lt;(touching) &lt; (1)&gt; then</div>
+              <div class="block motion indent2">point in direction (temp)</div>
+              <div class="block control indent2">stop [this script v]</div>
+              <div class="block control indent">end</div>
+              <div class="block motion indent">move (distance) steps</div>
+              <div class="block motion indent">turn right (180) degrees</div>
+              <div class="block variables indent">change [distance v] by (1)</div>
+              <div class="block control end">end repeat</div>
+            </div>
+          </div>
+        </li>
+
+      </ol>
+
+      <h3>How the wiggle algorithm works</h3>
+      <p>Let's walk through what's happening step by step:</p>
+      <ol class="steps">
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>Save the current direction</strong> in <strong>temp</strong> so we can restore
+              it at the end — we don't want the player facing the wrong way after being un-stuck.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>Start distance at 1.</strong> On the first attempt, we'll move just 1 pixel.
+              Each failed attempt, <strong>distance</strong> increases by 1, so we search 1 pixel
+              away, then 2, then 3, and so on — always finding the <em>nearest</em> free spot.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>Point toward dir (0 = up).</strong> We start by searching upward because the
+              player usually spawns slightly <em>into</em> the floor, so moving up is the fastest
+              way to freedom.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>Inside the loop:</strong> check if we're still touching the level. If
+              <strong>touching &lt; 1</strong> (not touching!), we've found a free spot — restore
+              direction and stop the script immediately.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>If still touching:</strong> move forward by <strong>distance</strong> steps
+              (in the current direction), then <strong>turn 180 degrees</strong> to face the opposite
+              direction. Increase <strong>distance</strong> by 1 and loop again.
+            </p>
+            <div class="callout why">
+              <strong>Why turn 180° each time?</strong> This is the "wiggle" — we alternate between
+              moving up and moving down, each time going a little further. After moving 1 pixel up,
+              we try 2 pixels down, then 3 pixels up, then 4 pixels down... We're searching an
+              ever-growing zone around the original position, guaranteeing we find the closest
+              free space in either vertical direction.
+            </div>
+          </div>
+        </li>
+        <li>
+          <div class="step-content">
+            <p>
+              <strong>The repeat (64) limit</strong> means we'll give up after 64 attempts. This
+              prevents an infinite loop that would freeze Scratch if the player somehow ends up
+              deeply stuck in a wall. You can increase this to <strong>128</strong> if you want
+              extra tolerance for tricky level designs.
+            </p>
+          </div>
+        </li>
+      </ol>
+
+      <figure class="screenshot-placeholder">
+        <div class="placeholder-box">[IMAGE: The define Fix Collision in Direction script, showing the full repeat 64 loop with Check Touching Solid, the if/stop, move, turn 180, and change distance blocks clearly visible]</div>
+        <figcaption>The complete "wiggle" algorithm — 64 attempts to find the nearest free space</figcaption>
+      </figure>
+
+      <div class="callout tip">
+        <strong>Tip — Test it visually!</strong> In the Scratch editor, manually position the player
+        sprite so it overlaps the Level sprite. Then click directly on the
+        <strong>define Fix Collision in Direction</strong> block header to run it. Because you ran it
+        by clicking (not via a broadcast), the "run without screen refresh" setting is ignored and
+        you'll see the player wiggling up and down in slow motion until it pops free. Very satisfying!
+      </div>
+
+      <div class="callout note">
+        <strong>Note — Bad level design still causes problems.</strong> If you place a wall across
+        the full height of the scene exit, a player jumping into the next scene might spawn inside
+        that wall. The wiggle algorithm can handle small overlaps, but can't escape a solid wall that
+        fills the entire entry point. The best solution is good level design — don't place solid
+        blocks right at the scene border.
+      </div>
+
+      <div class="try-it">
+        <strong>🎮 Try it!</strong> Click the green flag. Walk off the right edge into Scene 2,
+        then immediately walk back into Scene 1. Even if the floor heights differ slightly between
+        scenes, the player should now pop smoothly onto the surface instead of getting stuck.
+        Try jumping into the transition too!
+      </div>
+
+    </section>
+
+    <!-- =================================================================
+         SUMMARY
+         ================================================================= -->
+    <section class="summary card">
+      <h2>✅ What We've Built</h2>
+      <p>
+        In this lesson we've transformed our single-screen prototype into the foundations of a real
+        game engine. We moved from slow colour-based collisions to faster sprite-based detection,
+        centralised all collision logic into a single <strong>Check Touching Solid</strong> block,
+        and refactored the code into a clean broadcast-driven game loop with clearly named custom
+        blocks. Most excitingly, we gave the game a whole world to explore — players can now walk
+        between multiple scenes, with automatic collision fixing so they never get stuck in the ground.
+      </p>
+      <p>
+        In the next lesson, we'll start bringing the player to life — adding sprite costume
+        animations so the character actually looks like it's walking and jumping!
+      </p>
+    </section>
+
+  </main>
+
+  <nav class="lesson-navigation" aria-label="Lesson navigation">
+    <a href="../lesson-1/index.html" class="btn btn-secondary">← Lesson 1</a>
+    <a href="../index.html" class="btn btn-secondary">All Lessons</a>
+    <a href="../lesson-3/index.html" class="btn btn-primary">Lesson 3 →</a>
+  </nav>
+
+  <footer class="site-footer">
+    <p>
+      Based on
+      <a href="https://www.youtube.com/playlist?list=PLy4zsTUHwGJIATydhFeZa5pspLZR7yE__"
+         target="_blank" rel="noopener">griffpatch's Code a Platformer Game</a> series
+    </p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,446 @@
+/* =============================================================================
+   Scratch Platformer Tutorial — Shared Stylesheet
+   ============================================================================= */
+
+/* Custom properties */
+:root {
+  /* Scratch brand colours */
+  --scratch-blue:   #4C97FF;
+  --scratch-orange: #FFAB19;
+  --scratch-purple: #9966FF;
+  --scratch-green:  #59C059;
+  --scratch-teal:   #5CB1D6;
+  --scratch-pink:   #CF63CF;
+
+  /* Block category colours */
+  --color-event:     #FFCA36;
+  --color-control:   #FFAB19;
+  --color-motion:    #4C97FF;
+  --color-looks:     #9966FF;
+  --color-sound:     #CF63CF;
+  --color-sensing:   #5CB1D6;
+  --color-operators: #59C059;
+  --color-variables: #FF8C1A;
+
+  /* Layout */
+  --text-primary:   #1a1a2e;
+  --text-secondary: #555;
+  --bg-page:        #f5f7fb;
+  --bg-card:        #ffffff;
+  --border-radius:  12px;
+  --shadow:         0 2px 12px rgba(0, 0, 0, 0.08);
+  --max-width:      860px;
+}
+
+/* Reset & base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--bg-page);
+}
+
+a { color: var(--scratch-blue); }
+a:hover { text-decoration: underline; }
+
+/* =============================================================================
+   Site Header
+   ============================================================================= */
+.site-header {
+  background: linear-gradient(135deg, #4C97FF 0%, #9966FF 100%);
+  color: white;
+  padding: 1rem 2rem;
+}
+
+.header-inner {
+  max-width: var(--max-width);
+  margin: 0 auto;
+  display: flex;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: white;
+  text-decoration: none;
+}
+
+.header-subtitle {
+  font-size: 0.9rem;
+  opacity: 0.85;
+}
+
+/* =============================================================================
+   Breadcrumb
+   ============================================================================= */
+.breadcrumb {
+  max-width: var(--max-width);
+  margin: 0.75rem auto;
+  padding: 0 1.5rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.breadcrumb a { color: var(--scratch-blue); text-decoration: none; }
+.breadcrumb a:hover { text-decoration: underline; }
+
+/* =============================================================================
+   Main Layout
+   ============================================================================= */
+.lesson-content,
+.index-content {
+  max-width: var(--max-width);
+  margin: 0 auto 3rem;
+  padding: 0 1.5rem;
+}
+
+/* =============================================================================
+   Lesson Header
+   ============================================================================= */
+.lesson-header {
+  margin: 2rem 0 1.5rem;
+}
+
+.lesson-badge {
+  display: inline-block;
+  background: var(--scratch-orange);
+  color: white;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.2rem 0.75rem;
+  border-radius: 99px;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.lesson-header h1 {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin-bottom: 0.5rem;
+}
+
+.lesson-intro {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   Cards
+   ============================================================================= */
+.card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 1.5rem 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.card h2 {
+  margin-bottom: 0.75rem;
+  font-size: 1.2rem;
+}
+
+/* =============================================================================
+   Overview
+   ============================================================================= */
+.overview ul {
+  list-style: none;
+  display: grid;
+  gap: 0.4rem;
+}
+
+.overview ul li::before { content: "✅ "; }
+
+/* =============================================================================
+   Tutorial Sections
+   ============================================================================= */
+.tutorial-section {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+
+.section-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  background: var(--scratch-blue);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.9rem;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* =============================================================================
+   Steps
+   ============================================================================= */
+.steps {
+  list-style: none;
+  counter-reset: step-counter;
+  display: grid;
+  gap: 1.25rem;
+  margin: 1.25rem 0;
+}
+
+.steps > li {
+  counter-increment: step-counter;
+  display: grid;
+  grid-template-columns: 2.25rem 1fr;
+  gap: 0.75rem;
+}
+
+.steps > li::before {
+  content: counter(step-counter);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: var(--scratch-orange);
+  color: white;
+  border-radius: 50%;
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding-top: 0.4rem;
+  flex-shrink: 0;
+}
+
+.step-content { padding-top: 0.2rem; }
+.step-content p { margin-bottom: 0.5rem; }
+
+/* =============================================================================
+   Scratch Block Display
+   ============================================================================= */
+.scratch-blocks {
+  background: #f0f4ff;
+  border: 2px solid #d0d8f0;
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+  font-family: 'Courier New', monospace;
+  font-size: 0.88rem;
+  display: grid;
+  gap: 0.3rem;
+}
+
+.block {
+  display: inline-block;
+  padding: 0.3rem 0.75rem;
+  border-radius: 6px;
+  color: white;
+  font-weight: 600;
+  width: fit-content;
+}
+
+.block.indent  { margin-left: 1.5rem; }
+.block.indent2 { margin-left: 3rem; }
+
+.block.event     { background: var(--color-event);     color: #333; }
+.block.control   { background: var(--color-control);   color: #333; }
+.block.control.end { opacity: 0.65; }
+.block.motion    { background: var(--color-motion); }
+.block.looks     { background: var(--color-looks); }
+.block.sound     { background: var(--color-sound); }
+.block.sensing   { background: var(--color-sensing); }
+.block.operators { background: var(--color-operators); }
+.block.variables { background: var(--color-variables); }
+
+/* =============================================================================
+   Callouts
+   ============================================================================= */
+.callout {
+  border-left: 4px solid;
+  padding: 0.75rem 1rem;
+  border-radius: 0 8px 8px 0;
+  margin: 0.75rem 0;
+  font-size: 0.95rem;
+}
+
+.callout.why  { border-color: var(--scratch-teal);   background: #e8f6fb; color: #1a4a5c; }
+.callout.tip  { border-color: var(--scratch-green);  background: #eafaea; color: #1a4a1a; }
+.callout.note { border-color: var(--scratch-purple); background: #f3eeff; color: #3a1a6a; }
+
+/* =============================================================================
+   Screenshot Placeholders
+   ============================================================================= */
+figure.screenshot-placeholder {
+  margin: 1rem 0;
+  text-align: center;
+}
+
+.placeholder-box {
+  background: #e8ecf2;
+  border: 2px dashed #aab4c8;
+  border-radius: 8px;
+  padding: 2rem;
+  color: #6b7a94;
+  font-style: italic;
+}
+
+figcaption {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-top: 0.4rem;
+}
+
+/* =============================================================================
+   "Try it!" Prompts
+   ============================================================================= */
+.try-it {
+  background: linear-gradient(135deg, #e8f4ff, #f0e8ff);
+  border-radius: 8px;
+  padding: 0.75rem 1rem;
+  margin-top: 1.25rem;
+  font-size: 0.95rem;
+}
+
+/* =============================================================================
+   Summary
+   ============================================================================= */
+.summary h2 { color: var(--scratch-green); }
+.summary p  { margin-bottom: 0.5rem; }
+
+/* =============================================================================
+   Lesson Navigation
+   ============================================================================= */
+.lesson-navigation {
+  max-width: var(--max-width);
+  margin: 0 auto 2rem;
+  padding: 0 1.5rem;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.btn {
+  display: inline-block;
+  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: opacity 0.15s;
+}
+
+.btn:hover { opacity: 0.85; text-decoration: none; }
+.btn-primary   { background: var(--scratch-blue);   color: white; }
+.btn-secondary { background: var(--bg-card); color: var(--text-primary); box-shadow: var(--shadow); }
+
+/* =============================================================================
+   Index Page
+   ============================================================================= */
+.hero {
+  padding: 2.5rem 0 2rem;
+}
+
+.hero h1 {
+  font-size: 2.25rem;
+  font-weight: 800;
+  margin-bottom: 0.75rem;
+}
+
+.hero-text {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  max-width: 600px;
+}
+
+.lessons h2 {
+  font-size: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.lesson-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1.25rem;
+}
+
+.lesson-card {
+  background: var(--bg-card);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1rem;
+  align-items: start;
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: transform 0.15s, box-shadow 0.15s;
+  border: 2px solid transparent;
+}
+
+.lesson-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+  border-color: var(--scratch-blue);
+  text-decoration: none;
+}
+
+.lesson-card-number {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--scratch-blue), var(--scratch-purple));
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.lesson-card h3 {
+  font-size: 1rem;
+  font-weight: 700;
+  margin-bottom: 0.25rem;
+}
+
+.lesson-card p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* =============================================================================
+   Footer
+   ============================================================================= */
+.site-footer {
+  text-align: center;
+  padding: 1.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  border-top: 1px solid #e0e4ec;
+}
+
+/* =============================================================================
+   Responsive
+   ============================================================================= */
+@media (max-width: 600px) {
+  .lesson-header h1 { font-size: 1.5rem; }
+  .hero h1 { font-size: 1.75rem; }
+  .tutorial-section, .card { padding: 1.25rem; }
+  .lesson-navigation { justify-content: center; }
+}
