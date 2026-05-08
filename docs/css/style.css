@@ -298,6 +298,71 @@ figure.screenshot-placeholder {
   font-style: italic;
 }
 
+/* =============================================================================
+   Expandable Lesson Screenshots
+   ============================================================================= */
+figure.lesson-screenshot {
+  margin: 1.5rem 0;
+  text-align: center;
+}
+
+figure.lesson-screenshot details {
+  display: inline-block;
+  max-width: 100%;
+}
+
+figure.lesson-screenshot details summary {
+  list-style: none;
+  cursor: zoom-in;
+  display: inline-block;
+}
+
+figure.lesson-screenshot details summary::-webkit-details-marker { display: none; }
+figure.lesson-screenshot details summary::marker { display: none; }
+
+figure.lesson-screenshot details summary img {
+  max-height: 220px;
+  max-width: 100%;
+  border-radius: 8px;
+  border: 2px solid #d0d8e8;
+  box-shadow: var(--shadow);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  display: block;
+}
+
+figure.lesson-screenshot details summary:hover img {
+  border-color: var(--scratch-purple);
+  box-shadow: 0 4px 20px rgba(153, 102, 255, 0.25);
+}
+
+figure.lesson-screenshot details[open] {
+  width: 100%;
+}
+
+figure.lesson-screenshot details[open] summary {
+  cursor: zoom-out;
+  display: block;
+  width: 100%;
+}
+
+figure.lesson-screenshot details[open] summary img {
+  max-height: none;
+  width: 100%;
+  border-color: var(--scratch-purple);
+}
+
+figure.lesson-screenshot details summary::after {
+  content: ' 🔍';
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  display: block;
+  margin-top: 0.25rem;
+}
+
+figure.lesson-screenshot details[open] summary::after {
+  content: ' ✕ click to collapse';
+}
+
 figcaption {
   font-size: 0.85rem;
   color: var(--text-secondary);
